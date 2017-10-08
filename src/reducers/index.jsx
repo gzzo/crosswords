@@ -1,16 +1,15 @@
 import {combineReducers} from 'redux';
 import {all} from 'redux-saga/effects';
 
-const sampleReducer = (state = {}, action) => (state);
+import {reducer as puzzle, rootSaga as puzzleSaga} from 'reducers/puzzle';
 
-function* sampleRootSaga() {};
 
 export function* rootSaga() {
   yield all([
-    sampleRootSaga()
+    puzzleSaga()
   ])
 }
 
 export const reducers = combineReducers({
-  sampleReducer
+  puzzle
 });

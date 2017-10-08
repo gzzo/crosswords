@@ -32,7 +32,10 @@ const render = () => {
 
 if (module.hot) {
   module.hot.accept('app', render);
-  module.hot.accept('reducers', () => store.replaceReducer(reducers))
+  module.hot.accept('reducers', () => {
+    store.replaceReducer(reducers)
+    console.log('replacing reducers')
+  })
 }
 
 render();
