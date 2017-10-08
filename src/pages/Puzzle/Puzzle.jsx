@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid } from 'components/Grid/Grid';
+import { ClueList } from 'components/ClueList/ClueList';
+import { across, down } from 'constants/clue';
 import { fetchPuzzle } from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
@@ -25,17 +27,18 @@ class Puzzle extends React.Component {
     }
 
     return (
-      <div>
+      <div className={css.puzzleContainer}>
         <div className={css.headerContainer}>
           header
         </div>
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
             <div className={css.currentClue}>current clue</div>
-            <Grid {...puzzle.grid} />
+            <Grid grid={puzzle.grid} width={puzzle.width} />
           </div>
           <div className={css.cluesContainer}>
-            clues
+            <ClueList clues={puzzle.clues.across} directionName={across} />
+            <ClueList clues={puzzle.clues.down} directionName={down} />
           </div>
         </div>
       </div>

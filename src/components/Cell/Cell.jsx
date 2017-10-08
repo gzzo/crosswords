@@ -19,7 +19,7 @@ export class Cell extends React.Component {
 
     const tatterClasses = classNames(
       false && css.tatter
-    )
+    );
 
     const guessClasses = classNames(css.guess, {
     });
@@ -31,7 +31,7 @@ export class Cell extends React.Component {
           <div className={tatterClasses} />
         </div>
         <div className={css.number}>
-
+          {this.props.clueNum}
         </div>
         <div className={guessClasses}>
           {this.props.answer}

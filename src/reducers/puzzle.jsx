@@ -1,7 +1,7 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects';
 
 import { puzzleFetcher } from 'utils/fetcher';
-import { generateGrid } from 'utils/puzzle';
+import { initializePuzzle } from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
 const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
@@ -43,8 +43,7 @@ export function reducer(state = {}, action) {
       return {
         ...state,
         [action.name]: {
-          data: puzzleObject,
-          grid: generateGrid(puzzleObject),
+          ...initializePuzzle(puzzleObject),
         },
       };
     }

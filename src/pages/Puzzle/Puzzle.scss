@@ -1,3 +1,7 @@
+.puzzleContainer {
+  font-family: helvetica, arial, sans-serif;
+}
+
 .headerContainer {
   border-bottom: 1px solid lightslategray;
   border-top: 1px solid lightslategray;
@@ -18,4 +22,8 @@
 .cluesContainer {
   width: 49%;
   height: 100%;
+}
+
+.cluesContainer {
+  display: flex;
 }

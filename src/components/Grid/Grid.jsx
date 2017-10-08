@@ -8,7 +8,7 @@ import css from './Grid.scss';
 
 export class Grid extends React.Component {
   render() {
-    const { width, cells } = this.props;
+    const { width, grid } = this.props;
     return (
       <div className={css.gridContainer}>
         <div className={css.gridContent}>
@@ -18,7 +18,7 @@ export class Grid extends React.Component {
                 {_.range(width).map((colNumber) => {
                     const cellNumber = rowNumber * width + colNumber;
                     return (
-                      <Cell key={cellNumber} {...cells[cellNumber]} />
+                      <Cell key={cellNumber} {...grid[cellNumber]} />
                     );
                   })}
               </div>

@@ -18,7 +18,7 @@
   background-color: #A7D8FF;
 }
 
-.related {
+.cell_related {
   background-color: #FFECA0;
 }
 
@@ -34,17 +34,16 @@
 }
 
 .number {
-  font-size: 8px;
-  padding: 3% 5% 0;
+  font-size: .7vw;
+  padding: 5% 7% 0;
   position: absolute;
   top: 0;
   box-sizing: border-box;
 }
 
 .guess {
-  font-size: 90%;
-  line-height: 90%;
-  font-family: Helvetica,sans-serif;
+  font-size: 1.4vw;
+  line-height: 1.4vw;
   cursor: default;
   position: absolute;
   bottom: 0;
