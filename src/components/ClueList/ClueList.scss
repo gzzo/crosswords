@@ -2,7 +2,8 @@
   padding: 0 3px;
   box-sizing: border-box;
   overflow: hidden;
-  width: 50%;
+  flex: 1;
+  min-width: 250px;
 }
 
 .directionName {
@@ -26,34 +27,31 @@
 }
 
 .clue {
-  font-size: .9375rem;
-  line-height: 1.3;
-  font-weight: 400;
+  display: flex;
+  padding: 5px 1px;
   cursor: pointer;
-  padding: 5px 5px 5px 35px;
-  position: relative;
-  margin: 0;
-  min-height: 28px;
-  box-sizing: border-box;
+  border-left: 10px solid transparent;
 }
 
-.clue_selected {
+.clue_active {
   background-color: #A7D8FF;
 }
 
-.clue::before {
-  content: attr(value) " ";
-  border-left: 10px solid transparent;
-  font-weight: 700;
-  position: absolute;
-  height: 80%;
-  left: -5px;
-  padding: 5px 0;
-  text-align: right;
-  top: 0;
-  width: 25px;
+.clue_selected {
+  border-left-color: #A7D8FF;
 }
 
-.clue_active::before {
-  border-left-color: #A7D8FF;
+.clueNumber {
+  line-height: 1.4;
+  margin-right: 5px;
+  font-weight: 700;
+  text-align: right;
+  min-width: 24px;
+  width: 24px;
+}
+
+.clueValue {
+  line-height: 1.4;
+  margin-right: 5px;
+  margin-left: 5px;
 }

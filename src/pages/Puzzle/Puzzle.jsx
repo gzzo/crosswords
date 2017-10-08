@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import { Grid } from 'components/Grid/Grid';
 import { ClueList } from 'components/ClueList/ClueList';
+import { ActiveClue } from 'components/ActiveClue/ActiveClue';
+
 import { across, down } from 'constants/clue';
 import {
   CODE_ARROW_DOWN,
@@ -66,6 +68,9 @@ class Puzzle extends React.Component {
       return <div>not found...</div>;
     }
 
+    const { clues, activeDirection, activeClueNumber } = puzzle;
+    const activeClue = clues[activeDirection][activeClueNumber];
+
     return (
       <div className={css.puzzleContainer}>
         <div className={css.headerContainer}>
@@ -73,12 +78,22 @@ class Puzzle extends React.Component {
         </div>
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
-            <div className={css.currentClue}>current clue</div>
-            <Grid {...puzzle} />{}
+            <ActiveClue clue={activeClue} direction={activeDirection} />
+            <Grid {...puzzle} />
           </div>
           <div className={css.cluesContainer}>
-            <ClueList clues={puzzle.clues.across} directionName={across} />
-            <ClueList clues={puzzle.clues.down} directionName={down} />
+            <ClueList
+              clues={clues.across}
+              directionName={across}
+              activeDirection={activeDirection}
+              activeClueNumber={activeClueNumber}
+            />
+            <ClueList
+              clues={clues.down}
+              directionName={down}
+              activeDirection={activeDirection}
+              activeClueNumber={activeClueNumber}
+            />
           </div>
         </div>
       </div>
