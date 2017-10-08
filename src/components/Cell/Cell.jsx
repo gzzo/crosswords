@@ -6,11 +6,16 @@ import css from './Cell.scss';
 
 export class Cell extends React.Component {
   render() {
+    const {open, active, selected} = this.props;
+    const closed = !open;
+
     const squareClasses = classNames(css.cell, {
-      [css.cell_closed]: !this.props.open
+      [css.cell_selected]: selected,
+      [css.cell_active]: active,
+      [css.cell_closed]: closed,
     });
 
-    if (!this.props.open) {
+    if (closed) {
       return <div className={squareClasses} />;
     }
 
@@ -31,10 +36,10 @@ export class Cell extends React.Component {
           <div className={tatterClasses} />
         </div>
         <div className={css.number}>
-          {this.props.clueNum}
+          {this.props.clueStart}
         </div>
         <div className={guessClasses}>
-          {this.props.answer}
+          {this.props.guess}
         </div>
       </div>
     );

@@ -4,7 +4,15 @@ import { connect } from 'react-redux';
 import { Grid } from 'components/Grid/Grid';
 import { ClueList } from 'components/ClueList/ClueList';
 import { across, down } from 'constants/clue';
-import { fetchPuzzle } from 'reducers/puzzle';
+import {
+  CODE_ARROW_DOWN,
+  CODE_ARROW_LEFT,
+  CODE_BACKSPACE,
+  CODE_LETTER_A,
+  CODE_LETTER_Z,
+  CODE_TAB
+} from 'constants/keys';
+import { fetchPuzzle, guessCell } from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
@@ -12,8 +20,40 @@ import css from './Puzzle.scss';
 
 class Puzzle extends React.Component {
   componentWillMount() {
-    const { puzzleName } = this.props.match.params;
-    this.props.fetchPuzzle(puzzleName);
+    this.props.fetchPuzzle();
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  handleKeyDown = (evt) => {
+    if (evt.ctrlKey || evt.altKey || evt.metaKey) {
+      return
+    }
+
+    const {keyCode} = evt;
+
+    // if (keyCode >= CODE_ARROW_LEFT && keyCode <= CODE_ARROW_DOWN) {
+    //   evt.preventDefault();
+    //   this.props.arrowKeys(evt.code);
+    // }
+    //
+    // else if (keyCode == CODE_TAB) {
+    //   evt.preventDefault();
+    //
+    //   if (evt.shiftKey) {
+    //     this.props.tabKeys(PREV);
+    //   } else {
+    //     this.props.tabKeys(NEXT);
+    //   }
+    // }
+
+    if (keyCode >= CODE_LETTER_A && keyCode <= CODE_LETTER_Z) {
+      this.props.guessCell(evt.key);
+    }
+
+    // else if (keyCode == CODE_BACKSPACE) {
+    //   evt.preventDefault();
+    //   this.props.backspaceKey();
+    // }
   }
 
   render() {
@@ -34,7 +74,7 @@ class Puzzle extends React.Component {
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
             <div className={css.currentClue}>current clue</div>
-            <Grid grid={puzzle.grid} width={puzzle.width} />
+            <Grid {...puzzle} />{}
           </div>
           <div className={css.cluesContainer}>
             <ClueList clues={puzzle.clues.across} directionName={across} />
@@ -51,10 +91,22 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchPuzzle: name => dispatch(fetchPuzzle(name)),
+  fetchPuzzle: puzzleName => () => dispatch(fetchPuzzle(puzzleName)),
+  guessCell: puzzleName => guess => dispatch(guessCell(puzzleName, guess))
 });
 
-const connectedPuzzle = connect(mapStateToProps, mapDispatchToProps)(Puzzle);
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  const { puzzleName } = ownProps.match.params;
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
+    guessCell: dispatchProps.guessCell(puzzleName),
+    fetchPuzzle: dispatchProps.fetchPuzzle(puzzleName)
+  }
+};
+
+const connectedPuzzle = connect(mapStateToProps, mapDispatchToProps, mergeProps)(Puzzle);
 
 export {
   connectedPuzzle as Puzzle,

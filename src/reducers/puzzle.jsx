@@ -6,24 +6,35 @@ import { initializePuzzle } from 'utils/puzzle';
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
 const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
 
-export function fetchPuzzle(name) {
+const GUESS_CELL = 'puzzle/GUESS_CELL';
+
+
+export function guessCell(puzzleName, guess) {
   return {
-    type: FETCH_PUZZLE,
-    name,
-  };
+    type: GUESS_CELL,
+    puzzleName,
+    guess
+  }
 }
 
-function fetchPuzzleReceive(name, response) {
+export function fetchPuzzle(puzzleName) {
+  return {
+    type: FETCH_PUZZLE,
+    puzzleName,
+  };
+}
+{}
+function fetchPuzzleReceive(puzzleName, response) {
   return {
     type: FETCH_PUZZLE_RECEIVE,
-    name,
+    puzzleName,
     response,
   };
 }
 
 function* fetchPuzzleRequest(action) {
-  const response = yield call(puzzleFetcher, `/puzzles/${action.name}.json`);
-  yield put(fetchPuzzleReceive(action.name, response));
+  const response = yield call(puzzleFetcher, `/puzzles/${action.puzzleName}.json`);
+  yield put(fetchPuzzleReceive(action.puzzleName, response));
 }
 
 function* watchPuzzle() {
@@ -42,10 +53,29 @@ export function reducer(state = {}, action) {
       const puzzleObject = action.response[0];
       return {
         ...state,
-        [action.name]: {
+        [action.puzzleName]: {
           ...initializePuzzle(puzzleObject),
         },
       };
+    }
+
+    case GUESS_CELL: {
+      const {grid, activeCellNumber} = state[action.puzzleName];
+      const activeCell = grid[activeCellNumber];
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          grid: [
+            ...grid.slice(0, activeCellNumber),
+            {
+              ...activeCell,
+              guess: action.guess.toUpperCase(),
+            },
+            ...grid.slice(activeCellNumber + 1)
+          ]
+        }
+      }
     }
 
     default: {
