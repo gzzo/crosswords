@@ -12,6 +12,6 @@ export class Page extends React.Component {
       <div className={pageClasses}>
         {this.props.children}
       </div>
-    )
+    );
   }
 }

@@ -8,9 +8,6 @@ module.exports = {
     'babel-polyfill',
   ],
 
-  plugins: [
-    // new CleanWebpackPlugin(['dist']),
-  ],
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -29,7 +26,15 @@ module.exports = {
         test: /\.s?css$/,
         use: [
           'style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+              localIdentName: '[path][name]__[local]--[hash:base64:5]'
+            }
+          },
+          'postcss-loader'
         ],
       },
       {

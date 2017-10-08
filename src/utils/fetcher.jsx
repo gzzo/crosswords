@@ -3,20 +3,15 @@ export const STATUS_404 = 'STATUS_404';
 export function puzzleFetcher(path, headers = {}) {
   return fetch(
     path,
-    headers
-  ).then(
-    response => {
-      if (response.status === 200) {
-        return response.json();
-      } else if (response.status === 404) {
-        return STATUS_404;
-      } else {
-        throw new Error('invalid status', response.status)
-      }
+    headers,
+  ).then((response) => {
+    if (response.status === 200) {
+      return response.json();
+    } else if (response.status === 404) {
+      return STATUS_404;
     }
-  ).catch(
-    error => {
-      console.error('failed to fetch puzzle: ', path, error)
-    }
-  );
+    throw new Error('invalid status', response.status);
+  }).catch((error) => {
+    console.error('failed to fetch puzzle: ', path, error);
+  });
 }

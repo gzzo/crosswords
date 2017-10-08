@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {AppContainer} from 'react-hot-loader';
-import {BrowserRouter} from 'react-router-dom';
-import {Provider} from 'react-redux';
-import {createStore, applyMiddleware} from 'redux';
-import {reducers, rootSaga} from 'reducers';
+import { AppContainer } from 'react-hot-loader';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { reducers, rootSaga } from 'reducers';
 import createSagaMiddleware from 'redux-saga';
 
-import {App} from 'app';
+import { App } from 'app';
 
 
 const sagaMiddleware = createSagaMiddleware();
@@ -32,10 +32,7 @@ const render = () => {
 
 if (module.hot) {
   module.hot.accept('app', render);
-  module.hot.accept('reducers', () => {
-    store.replaceReducer(reducers)
-    console.log('replacing reducers')
-  })
+  module.hot.accept('reducers', () => store.replaceReducer(reducers));
 }
 
 render();

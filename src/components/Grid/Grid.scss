@@ -1,0 +1,36 @@
+.gridContainer {
+  position: relative;
+}
+
+.gridContainer:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+.gridContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.gridInnerContent {
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
+  height: 100%;
+  table-layout: fixed;
+}
+
+.gridRow {
+  display: table-row;
+}
+
+.gridCell {
+  display: table-cell;
+  border: 1px solid dimgray;
+  background-color: white;
+  box-sizing: border-box;
+}

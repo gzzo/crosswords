@@ -1,8 +1,8 @@
 import React from 'react';
-import {Route} from "react-router-dom";
+import { Route } from 'react-router-dom';
 
-import {Home} from 'pages/Home/Home';
-import {Puzzle} from 'pages/Puzzle/Puzzle';
+import { Home } from 'pages/Home/Home';
+import { Puzzle } from 'pages/Puzzle/Puzzle';
 
 
 export class App extends React.Component {
@@ -12,6 +12,6 @@ export class App extends React.Component {
         <Route path="/home" component={Home} />
         <Route path="/puzzle/:puzzleName" component={Puzzle} />
       </div>
-    )
+    );
   }
 }

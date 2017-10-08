@@ -1,0 +1,21 @@
+.headerContainer {
+  border-bottom: 1px solid lightslategray;
+  border-top: 1px solid lightslategray;
+}
+
+.gameContainer {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.currentClue {
+  padding-bottom: 10px;
+
+}
+
+.gridContainer,
+.cluesContainer {
+  width: 48%;
+  height: 100%;
+}

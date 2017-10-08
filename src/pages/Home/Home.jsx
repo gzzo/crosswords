@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Page} from 'components/Page/Page';
+import { Page } from 'components/Page/Page';
 
 
 export class Home extends React.Component {
@@ -9,6 +9,6 @@ export class Home extends React.Component {
       <Page>
         Homepage
       </Page>
-    )
+    );
   }
 }
