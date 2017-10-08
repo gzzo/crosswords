@@ -1,0 +1,78 @@
+.cell {
+  border: 1px solid dimgray;
+  display: table-cell;
+  background-color: white;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.cell_closed {
+  background-color: black;
+}
+
+.cell_selected {
+  background-color: #FFDA00;
+}
+
+.cell_active {
+  background-color: #A7D8FF;
+}
+
+.related {
+  background-color: #FFECA0;
+}
+
+.cell_wrong::after {
+  transform: rotate(-45deg);
+  position: absolute;
+  border-top: 2px solid #F23F00;
+  content: '';
+  height: 1px;
+  left: -22.5%;
+  top: 50%;
+  width: 141.42136%;
+}
+
+.number {
+  font-size: 8px;
+  padding: 3% 5% 0;
+  position: absolute;
+  top: 0;
+  box-sizing: border-box;
+}
+
+.guess {
+  font-size: 90%;
+  line-height: 90%;
+  font-family: Helvetica,sans-serif;
+  cursor: default;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.solved {
+  color: #0858AA;
+}
+
+.cheat {
+  border-color: transparent;
+  border-style: solid none none solid;
+  right: 0;
+  border-top-color: black;
+  border-width: 11.1111px;
+  position: absolute;
+}
+
+.revealed {
+  border-top-color: #F23F00;
+}
+
+.tatter {
+  border: 1.66667px solid white;
+  border-radius: 50%;
+  position: absolute;
+  right: 2px;
+  top: -9px;
+}

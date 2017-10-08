@@ -22,15 +22,9 @@
   width: 100%;
   height: 100%;
   table-layout: fixed;
+  border: 3px solid black;
 }
 
 .gridRow {
   display: table-row;
-}
-
-.gridCell {
-  display: table-cell;
-  border: 1px solid dimgray;
-  background-color: white;
-  box-sizing: border-box;
 }
