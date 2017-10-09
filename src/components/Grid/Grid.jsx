@@ -9,8 +9,8 @@ import css from './Grid.scss';
 
 export class Grid extends React.Component {
   render() {
-    const { width, grid, clues, activeCellNumber, activeDirection} = this.props;
-    const activeCell = grid[activeCellNumber];
+    const { width, cells, clues, activeCellNumber, activeDirection} = this.props;
+    const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
     return (
@@ -26,7 +26,7 @@ export class Grid extends React.Component {
                         key={cellNumber}
                         active={activeCellNumber === cellNumber}
                         selected={cellNumberInClue(cellNumber, activeClue, activeDirection, width)}
-                        {...grid[cellNumber]}
+                        {...cells[cellNumber]}
                       />
                     );
                   })}

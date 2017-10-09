@@ -1,13 +1,22 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects';
 
 import { puzzleFetcher } from 'utils/fetcher';
-import { initializePuzzle, getNextCellNumber } from 'utils/puzzle';
+import { initializePuzzle, getNextCellNumber, getMoveCellNumber } from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
 const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
 
 const GUESS_CELL = 'puzzle/GUESS_CELL';
+const MOVE_ACTIVE_CELL = 'puzzle/MOVE_ACTIVE_CELL';
 
+
+export function moveActiveCell(puzzleName, move) {
+  return {
+    type: MOVE_ACTIVE_CELL,
+    puzzleName,
+    move
+  }
+}
 
 export function guessCell(puzzleName, guess) {
   return {
@@ -23,7 +32,7 @@ export function fetchPuzzle(puzzleName) {
     puzzleName,
   };
 }
-{}
+
 function fetchPuzzleReceive(puzzleName, response) {
   return {
     type: FETCH_PUZZLE_RECEIVE,
@@ -60,23 +69,38 @@ export function reducer(state = {}, action) {
     }
 
     case GUESS_CELL: {
-      const {grid, activeCellNumber, activeDirection, clues, width} = state[action.puzzleName];
-      const activeCell = grid[activeCellNumber];
-      const nextCellNumber = getNextCellNumber(activeCellNumber, activeDirection,  grid, clues, width);
-      console.log(nextCellNumber);
+      const {cells, activeCellNumber, activeDirection, clues, width} = state[action.puzzleName];
+      const activeCell = cells[activeCellNumber];
+      const nextCellNumber = getNextCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
+
       return {
         ...state,
         [action.puzzleName]: {
           ...state[action.puzzleName],
-          grid: [
-            ...grid.slice(0, activeCellNumber),
+          cells: [
+            ...cells.slice(0, activeCellNumber),
             {
               ...activeCell,
               guess: action.guess.toUpperCase(),
             },
-            ...grid.slice(activeCellNumber + 1)
+            ...cells.slice(activeCellNumber + 1)
           ],
           activeCellNumber: nextCellNumber,
+        }
+      }
+    }
+
+    case MOVE_ACTIVE_CELL: {
+      const {activeDirection, activeCellNumber, cells, width} = state[action.puzzleName];
+      const {newDirection, newCellNumber} = getMoveCellNumber(activeCellNumber, activeDirection,
+        cells, width, action.move);
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          activeDirection: newDirection,
+          activeCellNumber: newCellNumber,
         }
       }
     }
