@@ -68,8 +68,9 @@ class Puzzle extends React.Component {
       return <div>not found...</div>;
     }
 
-    const { clues, activeDirection, activeClueNumber } = puzzle;
-    const activeClue = clues[activeDirection][activeClueNumber];
+    const { clues, activeDirection, activeCellNumber, grid } = puzzle;
+    const activeCell = grid[activeCellNumber];
+    const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
     return (
       <div className={css.puzzleContainer}>
@@ -83,16 +84,16 @@ class Puzzle extends React.Component {
           </div>
           <div className={css.cluesContainer}>
             <ClueList
-              clues={clues.across}
-              directionName={across}
+              clues={clues}
+              direction={across}
               activeDirection={activeDirection}
-              activeClueNumber={activeClueNumber}
+              activeCell={activeCell}
             />
             <ClueList
-              clues={clues.down}
-              directionName={down}
+              clues={clues}
+              direction={down}
               activeDirection={activeDirection}
-              activeClueNumber={activeClueNumber}
+              activeCell={activeCell}
             />
           </div>
         </div>

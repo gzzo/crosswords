@@ -9,8 +9,9 @@ import css from './Grid.scss';
 
 export class Grid extends React.Component {
   render() {
-    const { width, grid, clues, activeCellNumber, activeDirection, activeClueNumber} = this.props;
-    const activeClue = clues[activeDirection][activeClueNumber];
+    const { width, grid, clues, activeCellNumber, activeDirection} = this.props;
+    const activeCell = grid[activeCellNumber];
+    const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
     return (
       <div className={css.gridContainer}>

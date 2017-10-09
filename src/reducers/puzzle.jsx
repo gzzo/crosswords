@@ -1,7 +1,7 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects';
 
 import { puzzleFetcher } from 'utils/fetcher';
-import { initializePuzzle } from 'utils/puzzle';
+import { initializePuzzle, getNextCellNumber } from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
 const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
@@ -60,8 +60,10 @@ export function reducer(state = {}, action) {
     }
 
     case GUESS_CELL: {
-      const {grid, activeCellNumber} = state[action.puzzleName];
+      const {grid, activeCellNumber, activeDirection, clues, width} = state[action.puzzleName];
       const activeCell = grid[activeCellNumber];
+      const nextCellNumber = getNextCellNumber(activeCellNumber, activeDirection,  grid, clues, width);
+      console.log(nextCellNumber);
       return {
         ...state,
         [action.puzzleName]: {
@@ -73,7 +75,8 @@ export function reducer(state = {}, action) {
               guess: action.guess.toUpperCase(),
             },
             ...grid.slice(activeCellNumber + 1)
-          ]
+          ],
+          activeCellNumber: nextCellNumber,
         }
       }
     }
