@@ -14,7 +14,7 @@ import {
   CODE_LETTER_Z,
   CODE_TAB
 } from 'constants/keys';
-import { fetchPuzzle, guessCell, moveActiveCell } from 'reducers/puzzle';
+import { fetchPuzzle, guessCell, moveActiveCell, moveActiveClue } from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
@@ -38,16 +38,16 @@ class Puzzle extends React.Component {
       this.props.moveActiveCell(evt.keyCode);
     }
 
-    //
-    // else if (keyCode == CODE_TAB) {
-    //   evt.preventDefault();
-    //
-    //   if (evt.shiftKey) {
-    //     this.props.tabKeys(PREV);
-    //   } else {
-    //     this.props.tabKeys(NEXT);
-    //   }
-    // }
+
+    else if (keyCode == CODE_TAB) {
+      evt.preventDefault();
+
+      if (evt.shiftKey) {
+        this.props.moveActiveClue(false);
+      } else {
+        this.props.moveActiveClue(true);
+      }
+    }
 
     else if (keyCode >= CODE_LETTER_A && keyCode <= CODE_LETTER_Z) {
       this.props.guessCell(evt.key);
@@ -72,8 +72,6 @@ class Puzzle extends React.Component {
     const { clues, activeDirection, activeCellNumber, cells } = puzzle;
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
-
-    console.log('Puzzle: render', activeDirection)
 
     return (
       <div className={css.puzzleContainer}>
@@ -112,7 +110,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = dispatch => ({
   fetchPuzzle: puzzleName => () => dispatch(fetchPuzzle(puzzleName)),
   guessCell: puzzleName => guess => dispatch(guessCell(puzzleName, guess)),
-  moveActiveCell: puzzleName => direction => dispatch(moveActiveCell(puzzleName, direction))
+  moveActiveCell: puzzleName => move => dispatch(moveActiveCell(puzzleName, move)),
+  moveActiveClue: puzzleName => move => dispatch(moveActiveClue(puzzleName, move)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -123,7 +122,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...ownProps,
     guessCell: dispatchProps.guessCell(puzzleName),
     fetchPuzzle: dispatchProps.fetchPuzzle(puzzleName),
-    moveActiveCell: dispatchProps.moveActiveCell(puzzleName)
+    moveActiveCell: dispatchProps.moveActiveCell(puzzleName),
+    moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
   }
 };
 

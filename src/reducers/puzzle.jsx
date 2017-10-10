@@ -1,14 +1,23 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects';
 
 import { puzzleFetcher } from 'utils/fetcher';
-import { initializePuzzle, getNextCellNumber, getMoveCellNumber } from 'utils/puzzle';
+import { initializePuzzle, getGuessCellNumber, getMoveCellNumber, getMoveClueNumber } from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
 const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
 
 const GUESS_CELL = 'puzzle/GUESS_CELL';
 const MOVE_ACTIVE_CELL = 'puzzle/MOVE_ACTIVE_CELL';
+const MOVE_ACTIVE_CLUE = 'puzzle/MOVE_ACTIVE_CLUE';
 
+
+export function moveActiveClue(puzzleName, move) {
+  return {
+    type: MOVE_ACTIVE_CLUE,
+    puzzleName,
+    move
+  }
+}
 
 export function moveActiveCell(puzzleName, move) {
   return {
@@ -71,7 +80,7 @@ export function reducer(state = {}, action) {
     case GUESS_CELL: {
       const {cells, activeCellNumber, activeDirection, clues, width} = state[action.puzzleName];
       const activeCell = cells[activeCellNumber];
-      const nextCellNumber = getNextCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
+      const nextCellNumber = getGuessCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
 
       return {
         ...state,
@@ -94,6 +103,21 @@ export function reducer(state = {}, action) {
       const {activeDirection, activeCellNumber, cells, width} = state[action.puzzleName];
       const {newDirection, newCellNumber} = getMoveCellNumber(activeCellNumber, activeDirection,
         cells, width, action.move);
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          activeDirection: newDirection,
+          activeCellNumber: newCellNumber,
+        }
+      }
+    }
+
+    case MOVE_ACTIVE_CLUE: {
+      const {activeDirection, activeCellNumber, cells, width, clues, defaultClues} = state[action.puzzleName];
+      const {newDirection, newCellNumber} = getMoveClueNumber(activeCellNumber, activeDirection,
+        cells, clues, width, defaultClues, action.move);
 
       return {
         ...state,
