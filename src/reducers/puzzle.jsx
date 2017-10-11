@@ -1,7 +1,13 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects';
 
 import { puzzleFetcher } from 'utils/fetcher';
-import { initializePuzzle, getGuessCellNumber, getMoveCellNumber, getMoveClueNumber } from 'utils/puzzle';
+import {
+  initializePuzzle,
+  getGuessCellNumber,
+  getMoveCellNumber,
+  getMoveClueNumber,
+  getRemoveGuessCellNumber,
+} from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
 const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
@@ -9,7 +15,15 @@ const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
 const GUESS_CELL = 'puzzle/GUESS_CELL';
 const MOVE_ACTIVE_CELL = 'puzzle/MOVE_ACTIVE_CELL';
 const MOVE_ACTIVE_CLUE = 'puzzle/MOVE_ACTIVE_CLUE';
+const REMOVE_GUESS = 'puzzle/REMOVE_GUESS';
 
+
+export function removeGuess(puzzleName) {
+  return {
+    type: REMOVE_GUESS,
+    puzzleName,
+  }
+}
 
 export function moveActiveClue(puzzleName, move) {
   return {
@@ -125,6 +139,28 @@ export function reducer(state = {}, action) {
           ...state[action.puzzleName],
           activeDirection: newDirection,
           activeCellNumber: newCellNumber,
+        }
+      }
+    }
+
+    case REMOVE_GUESS: {
+      const {cells, activeCellNumber, activeDirection, clues, width} = state[action.puzzleName];
+      const nextCellNumber = getRemoveGuessCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
+      const cellToRemove = cells[nextCellNumber];
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          cells: [
+            ...cells.slice(0, nextCellNumber),
+            {
+              ...cellToRemove,
+              guess: undefined,
+            },
+            ...cells.slice(nextCellNumber + 1)
+          ],
+          activeCellNumber: nextCellNumber,
         }
       }
     }

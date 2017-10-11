@@ -8,8 +8,9 @@ const getOtherDirection = direction => {
   return direction === across ? down : across;
 };
 
-const getStepSize = (direction, width) => {
-  return direction === across ? 1 : width;
+const getStepSize = (direction, width, positive = true) => {
+  const multiplier = positive ? 1 : -1;
+  return multiplier * (direction === across ? 1 : width);
 };
 
 const clueRange = (clue, direction, width) => {
@@ -17,8 +18,8 @@ const clueRange = (clue, direction, width) => {
   return _.range(clue.clueStart, clue.clueEnd + stepSize, stepSize);
 };
 
-const getNextCellNumber = (start, end, cells, direction, width) => {
-  const stepSize = getStepSize(direction, width);
+const getNextCellNumber = (start, end, cells, direction, width, moveForward = true) => {
+  const stepSize = getStepSize(direction, width, moveForward);
 
   for (let i = start; i < end; i += stepSize) {
     const candidateCell = cells[i];
@@ -36,13 +37,13 @@ const getNextClueNumber = (cellNumber, direction, cells, clues, width, move) => 
   return clues[direction][newClueNumber];
 };
 
-const getNextClue = (cellNumber, direction, cells, clues, width, defaultClues, move) => {
-  let newClue = getNextClueNumber(cellNumber, direction, cells, clues, width, move);
+const getNextClue = (cellNumber, direction, cells, clues, width, defaultClues, forward) => {
+  let newClue = getNextClueNumber(cellNumber, direction, cells, clues, width, forward);
   let newDirection = direction;
 
   if (!newClue) {
     newDirection = getOtherDirection(newDirection);
-    newClue = move ? defaultClues[newDirection].first : defaultClues[newDirection].last;
+    newClue = forward ? defaultClues[newDirection].first : defaultClues[newDirection].last;
   }
 
   return {
@@ -81,12 +82,26 @@ export const getGuessCellNumber = (activeCellNumber, activeDirection, cells, clu
   return activeCellNumber + stepSize;
 };
 
-export const getMoveClueNumber = (activeCellNumber, activeDirection, cells, clues, width, defaultClues, move) => {
+export const getRemoveGuessCellNumber = (activeCellNumber, activeDirection, cells, clues, width) => {
+  const stepSize = getStepSize(activeDirection, width, false);
+  const activeCell = cells[activeCellNumber];
+  const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+
+
+  if (activeCell.guess && !activeCell.correct) {
+    return activeCellNumber;
+  }
+
+  const previousCellNumber = activeCellNumber + stepSize;
+  return previousCellNumber >= activeClue.clueStart ? previousCellNumber : activeClue.clueStart;
+};
+
+export const getMoveClueNumber = (activeCellNumber, activeDirection, cells, clues, width, defaultClues, forward) => {
   const numClues = _.keys(clues[across]).length + _.keys(clues[down]).length;
 
   // move to the next empty cell
-  let {newClue, newDirection} = getNextClue(activeCellNumber, activeDirection, cells, clues, width, defaultClues, move);
-  console.log(newClue)
+  let {newClue, newDirection} = getNextClue(activeCellNumber, activeDirection, cells, clues, width, defaultClues, forward);
+  console.log(newClue);
   for (let i = 0; i < numClues - 1; i += 1) {
     const newCellNumber = getNextCellNumber(newClue.clueStart, newClue.clueEnd + 1, cells, newDirection, width);
 
@@ -97,11 +112,11 @@ export const getMoveClueNumber = (activeCellNumber, activeDirection, cells, clue
       }
     }
 
-    ({newClue, newDirection} = getNextClue(newClue.clueEnd, activeDirection, cells, clues, width, defaultClues, move));
+    ({newClue, newDirection} = getNextClue(newClue.clueEnd, newDirection, cells, clues, width, defaultClues, forward));
   }
 
   // there are no empty cells, move to the next clue
-  ({newClue, newDirection} = getNextClue(activeCellNumber, activeDirection, cells, clues, width, defaultClues, move));
+  ({newClue, newDirection} = getNextClue(activeCellNumber, activeDirection, cells, clues, width, defaultClues, forward));
   const newCellNumber = newClue.clueStart;
 
   return {
@@ -127,14 +142,13 @@ export const getMoveCellNumber = (activeCellNumber, activeDirection, cells, widt
   }
 
   const positiveMovement = move === CODE_ARROW_DOWN || move === CODE_ARROW_RIGHT;
-  const multiplier = positiveMovement ? 1 : -1;
-  const multipliedStepSize = multiplier * getStepSize(activeDirection, width);
+  const stepSize = getStepSize(activeDirection, width, positiveMovement);
 
   const numModWidth = activeCellNumber % width;
   const startNumber = activeDirection === across ? activeCellNumber - numModWidth : numModWidth;
   const endNumber = activeDirection === across ? startNumber + width - 1 : startNumber + width * width - width;
 
-  for (let i = activeCellNumber + multipliedStepSize; i >= startNumber && i <= endNumber; i += multipliedStepSize) {
+  for (let i = activeCellNumber + stepSize; i >= startNumber && i <= endNumber; i += stepSize) {
     if (cells[i].open) {
       return {
         newDirection: activeDirection,

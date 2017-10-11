@@ -14,7 +14,7 @@ import {
   CODE_LETTER_Z,
   CODE_TAB
 } from 'constants/keys';
-import { fetchPuzzle, guessCell, moveActiveCell, moveActiveClue } from 'reducers/puzzle';
+import { fetchPuzzle, guessCell, moveActiveCell, moveActiveClue, removeGuess } from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
@@ -39,7 +39,7 @@ class Puzzle extends React.Component {
     }
 
 
-    else if (keyCode == CODE_TAB) {
+    else if (keyCode === CODE_TAB) {
       evt.preventDefault();
 
       if (evt.shiftKey) {
@@ -53,10 +53,10 @@ class Puzzle extends React.Component {
       this.props.guessCell(evt.key);
     }
 
-    // else if (keyCode == CODE_BACKSPACE) {
-    //   evt.preventDefault();
-    //   this.props.backspaceKey();
-    // }
+    else if (keyCode === CODE_BACKSPACE) {
+      evt.preventDefault();
+      this.props.removeGuess();
+    }
   }
 
   render() {
@@ -112,6 +112,7 @@ const mapDispatchToProps = dispatch => ({
   guessCell: puzzleName => guess => dispatch(guessCell(puzzleName, guess)),
   moveActiveCell: puzzleName => move => dispatch(moveActiveCell(puzzleName, move)),
   moveActiveClue: puzzleName => move => dispatch(moveActiveClue(puzzleName, move)),
+  removeGuess: puzzleName => () => dispatch(removeGuess(puzzleName)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -124,6 +125,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     fetchPuzzle: dispatchProps.fetchPuzzle(puzzleName),
     moveActiveCell: dispatchProps.moveActiveCell(puzzleName),
     moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
+    removeGuess: dispatchProps.removeGuess(puzzleName),
   }
 };
 
