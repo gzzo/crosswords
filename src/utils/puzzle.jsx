@@ -4,7 +4,7 @@ import { directions, across, down } from 'constants/clue';
 import { CODE_ARROW_RIGHT, CODE_ARROW_LEFT, CODE_ARROW_DOWN, CODE_ARROW_UP } from 'constants/keys';
 
 
-const getOtherDirection = direction => {
+export const getOtherDirection = direction => {
   return direction === across ? down : across;
 };
 

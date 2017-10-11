@@ -9,7 +9,7 @@ import css from './Grid.scss';
 
 export class Grid extends React.Component {
   render() {
-    const { width, cells, clues, activeCellNumber, activeDirection} = this.props;
+    const {width, cells, clues, activeCellNumber, activeDirection, cellClick} = this.props;
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
@@ -26,6 +26,7 @@ export class Grid extends React.Component {
                         key={cellNumber}
                         active={activeCellNumber === cellNumber}
                         selected={cellNumberInClue(cellNumber, activeClue, activeDirection, width)}
+                        onClick={cellClick(cellNumber)}
                         {...cells[cellNumber]}
                       />
                     );

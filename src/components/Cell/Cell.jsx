@@ -31,7 +31,7 @@ export class Cell extends React.Component {
 
 
     return (
-      <div className={squareClasses}>
+      <div className={squareClasses} onClick={this.props.onClick}>
         <div className={cheatClasses}>
           <div className={tatterClasses} />
         </div>

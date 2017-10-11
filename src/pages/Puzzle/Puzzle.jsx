@@ -14,7 +14,7 @@ import {
   CODE_LETTER_Z,
   CODE_TAB
 } from 'constants/keys';
-import { fetchPuzzle, guessCell, moveActiveCell, moveActiveClue, removeGuess } from 'reducers/puzzle';
+import { fetchPuzzle, guessCell, moveActiveCell, moveActiveClue, removeGuess, cellClick } from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
@@ -81,7 +81,7 @@ class Puzzle extends React.Component {
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
             <ActiveClue clue={activeClue} direction={activeDirection} />
-            <Grid {...puzzle} />
+            <Grid {...puzzle} cellClick={this.props.cellClick} />
           </div>
           <div className={css.cluesContainer}>
             <ClueList
@@ -113,6 +113,7 @@ const mapDispatchToProps = dispatch => ({
   moveActiveCell: puzzleName => move => dispatch(moveActiveCell(puzzleName, move)),
   moveActiveClue: puzzleName => move => dispatch(moveActiveClue(puzzleName, move)),
   removeGuess: puzzleName => () => dispatch(removeGuess(puzzleName)),
+  cellClick: puzzleName => cellNumber => () => dispatch(cellClick(puzzleName, cellNumber)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -126,6 +127,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     moveActiveCell: dispatchProps.moveActiveCell(puzzleName),
     moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
     removeGuess: dispatchProps.removeGuess(puzzleName),
+    cellClick: dispatchProps.cellClick(puzzleName),
   }
 };
 
