@@ -14,7 +14,15 @@ import {
   CODE_LETTER_Z,
   CODE_TAB
 } from 'constants/keys';
-import { fetchPuzzle, guessCell, moveActiveCell, moveActiveClue, removeGuess, cellClick } from 'reducers/puzzle';
+import {
+  fetchPuzzle,
+  guessCell,
+  moveActiveCell,
+  moveActiveClue,
+  removeGuess,
+  cellClick,
+  clueClick,
+} from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
@@ -60,7 +68,7 @@ class Puzzle extends React.Component {
   }
 
   render() {
-    const { puzzle } = this.props;
+    const { puzzle, cellClick, clueClick } = this.props;
     if (!puzzle) {
       return <div>loading...</div>;
     }
@@ -81,7 +89,7 @@ class Puzzle extends React.Component {
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
             <ActiveClue clue={activeClue} direction={activeDirection} />
-            <Grid {...puzzle} cellClick={this.props.cellClick} />
+            <Grid {...puzzle} cellClick={cellClick} />
           </div>
           <div className={css.cluesContainer}>
             <ClueList
@@ -89,12 +97,14 @@ class Puzzle extends React.Component {
               direction={across}
               activeDirection={activeDirection}
               activeCell={activeCell}
+              clueClick={clueClick}
             />
             <ClueList
               clues={clues}
               direction={down}
               activeDirection={activeDirection}
               activeCell={activeCell}
+              clueClick={clueClick}
             />
           </div>
         </div>
@@ -114,6 +124,7 @@ const mapDispatchToProps = dispatch => ({
   moveActiveClue: puzzleName => move => dispatch(moveActiveClue(puzzleName, move)),
   removeGuess: puzzleName => () => dispatch(removeGuess(puzzleName)),
   cellClick: puzzleName => cellNumber => () => dispatch(cellClick(puzzleName, cellNumber)),
+  clueClick: puzzleName => (direction, clueNumber) => () => dispatch(clueClick(puzzleName, direction, clueNumber)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -128,6 +139,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
     removeGuess: dispatchProps.removeGuess(puzzleName),
     cellClick: dispatchProps.cellClick(puzzleName),
+    clueClick: dispatchProps.clueClick(puzzleName),
   }
 };
 

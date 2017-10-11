@@ -29,16 +29,12 @@ const getNextCellNumber = (start, end, cells, direction, width, moveForward = tr
   }
 };
 
-const getNextClueNumber = (cellNumber, direction, cells, clues, width, move) => {
+const getNextClue = (cellNumber, direction, cells, clues, width, defaultClues, forward) => {
   const activeCell = cells[cellNumber];
   const activeClue = clues[direction][activeCell.cellClues[direction]];
+  const newClueNumber = forward ? activeClue.nextClueNumber : activeClue.previousClueNumber;
 
-  const newClueNumber = move ? activeClue.nextClueNumber : activeClue.previousClueNumber;
-  return clues[direction][newClueNumber];
-};
-
-const getNextClue = (cellNumber, direction, cells, clues, width, defaultClues, forward) => {
-  let newClue = getNextClueNumber(cellNumber, direction, cells, clues, width, forward);
+  let newClue = clues[direction][newClueNumber];
   let newDirection = direction;
 
   if (!newClue) {
@@ -161,6 +157,13 @@ export const getMoveCellNumber = (activeCellNumber, activeDirection, cells, widt
     newDirection: activeDirection,
     newCellNumber: activeCellNumber
   }
+};
+
+export const getClickClueNumber  = (cells, clues, width, direction, clueNumber) => {
+  const newClue = clues[direction][clueNumber];
+  const nextEmptyCellNumber = getNextCellNumber(newClue.clueStart, newClue.clueEnd + 1, cells, direction, width);
+
+  return nextEmptyCellNumber || newClue.clueStart;
 };
 
 export const initializePuzzle = (puzzleObject) => {

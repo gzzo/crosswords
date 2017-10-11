@@ -8,6 +8,7 @@ import {
   getMoveClueNumber,
   getRemoveGuessCellNumber,
   getOtherDirection,
+  getClickClueNumber,
 } from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
@@ -18,7 +19,17 @@ const MOVE_ACTIVE_CELL = 'puzzle/MOVE_ACTIVE_CELL';
 const MOVE_ACTIVE_CLUE = 'puzzle/MOVE_ACTIVE_CLUE';
 const REMOVE_GUESS = 'puzzle/REMOVE_GUESS';
 const CELL_CLICK = 'puzzle/CELL_CLICK';
+const CLUE_CLICK = 'puzzle/CLUE_CLICK';
 
+
+export function clueClick(puzzleName, direction, clueNumber) {
+  return {
+    type: CLUE_CLICK,
+    puzzleName,
+    direction,
+    clueNumber,
+  }
+}
 
 export function cellClick(puzzleName, cellNumber) {
   return {
@@ -184,6 +195,20 @@ export function reducer(state = {}, action) {
           ...state[action.puzzleName],
           activeCellNumber: action.cellNumber,
           activeDirection: newDirection,
+        }
+      }
+    }
+
+    case CLUE_CLICK: {
+      const {cells, clues, width, activeCellNumber} = state[action.puzzleName];
+      const nextCellNumber = getClickClueNumber(cells, clues, width, action.direction, action.clueNumber);
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          activeDirection: action.direction,
+          activeCellNumber: nextCellNumber,
         }
       }
     }
