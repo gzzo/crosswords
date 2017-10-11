@@ -1,0 +1,15 @@
+.dropdownContainer {
+  cursor: pointer;
+}
+
+.dropdownContent {
+  display: none;
+  height: 40px;
+  transition: height 100ms;
+  position: absolute;
+}
+
+.dropdownContent_open {
+  display: block;
+  height: initial;
+}

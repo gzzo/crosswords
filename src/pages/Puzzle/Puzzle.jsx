@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Grid } from 'components/Grid/Grid';
 import { ClueList } from 'components/ClueList/ClueList';
 import { ActiveClue } from 'components/ActiveClue/ActiveClue';
+import { Toolbar } from 'components/Toolbar/Toolbar';
 
 import { across, down } from 'constants/clue';
 import {
@@ -83,9 +84,7 @@ class Puzzle extends React.Component {
 
     return (
       <div className={css.puzzleContainer}>
-        <div className={css.headerContainer}>
-          header
-        </div>
+        <Toolbar />
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
             <ActiveClue clue={activeClue} direction={activeDirection} />
