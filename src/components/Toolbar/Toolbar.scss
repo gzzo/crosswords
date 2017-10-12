@@ -1,9 +1,13 @@
 .toolbarContainer {
   width: 100%;
   border: 1px solid #e6e6e6;
-  height: 45px;
   box-sizing: border-box;
   justify-content: space-between;
   align-items: center;
+  display: flex;
+  border-width: 1px 0;
+}
+
+.toolbarMenu {
   display: flex;
 }

@@ -14,29 +14,44 @@ export class Dropdown extends React.Component {
   }
 
   toggleOpen = (evt) => {
-    evt.stopPropagation();
-    window.removeEventListener('click', this.toggleOpen);
+    document.removeEventListener('click', this.toggleOpen);
 
-    this.setState({
-      open: !this.state.open,
-    }, () => {
-      window.addEventListener('click', this.toggleOpen);
+    this.setState(prevState => ({
+      open: !prevState.open,
+    }), () => {
+      this.state.open && document.addEventListener('click', this.toggleOpen);
     });
   }
 
+  onClick = (optionKey) => () => {
+    this.props.onClick(optionKey);
+  }
+
   render() {
+    const dropdownTitleClasses = classNames(css.dropdownTitle, this.props.className, {
+      [css.dropdownTitle_open]: this.state.open
+    });
+
     const dropdownContentClasses = classNames(css.dropdownContent, {
       [css.dropdownContent_open]: this.state.open,
     });
 
     return (
       <div className={css.dropdownContainer}>
-        <div onClick={this.toggleOpen} ref={div => this.title = div}>
+        <button className={dropdownTitleClasses} onClick={this.toggleOpen} ref={title => this.title = title}>
           {this.props.title}
-        </div>
-        <div className={dropdownContentClasses}>
-          {this.props.children}
-        </div>
+        </button>
+        <ul className={dropdownContentClasses} ref={content => this.content = content}>
+          {this.props.options.map(option => {
+            const [optionKey, optionValue] = option;
+
+            return (
+              <li className={css.dropdownItem} key={optionKey} onClick={this.onClick(optionKey)}>
+                {optionValue}
+              </li>
+            )
+          })}
+        </ul>
       </div>
     )
   }
