@@ -101,7 +101,6 @@ export const getMoveClueNumber = (activeCellNumber, activeDirection, cells, clue
 
   // move to the next empty cell
   let {newClue, newDirection} = getNextClue(activeCellNumber, activeDirection, cells, clues, width, defaultClues, forward);
-  console.log(newClue);
   for (let i = 0; i < numClues - 1; i += 1) {
     const newCellNumber = getNextCellNumber(newClue.clueStart, newClue.clueEnd + 1, cells, newDirection, width);
 
@@ -177,7 +176,10 @@ const changeCells = (cellRange, cells, callback) => {
       return cell;
     }
 
-    if (cellIndex === cellRangeIndex++) {
+    const cellToChange = cellRange[cellRangeIndex];
+
+    if (cellIndex === cellToChange) {
+      cellRangeIndex++;
       return {
         ...cell,
         ...callback(cell),
@@ -188,24 +190,43 @@ const changeCells = (cellRange, cells, callback) => {
   });
 };
 
-const checkCells = (cellRange, cells) => {
-  return changeCells(cellRange, cells, cell => ({
+const checkCells = (cell) => {
+  return {
     cheated: cell.cheated || (cell.guess && cell.guess !== cell.answer),
     solved: cell.solved || (cell.guess === cell.answer),
-  }));
+  };
 };
 
-export const getCheckCells = (cells, clues, width, activeCellNumber, activeDirection, option) => {
+const revealCells = (cell) => {
+  return {
+    cheated: cell.cheated || cell.guess !== cell.answer,
+    solved: true,
+    revealed: true,
+    guess: cell.answer,
+  };
+};
+
+export const getCellChange = (callback, cells, clues, width, activeCellNumber, activeDirection, option) => {
   if (option === SQUARE) {
-    return checkCells([activeCellNumber], cells);
+    return changeCells([activeCellNumber], cells, callback);
   } else if (option === WORD) {
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
-    return checkCells(clueRange(activeClue, activeDirection, width), cells);
-  } else if (option === PUZZLE) {
-    return checkCells(_.range(cells.length), cells);
+    return changeCells(clueRange(activeClue, activeDirection, width), cells, callback);
+  } else if (option === PUZZLE || option === PUZZLE_AND_TIMER) {
+    return changeCells(_.range(cells.length), cells, callback);
   }
 };
+
+export const getRevealCells = (cells, clues, width, activeCellNumber, activeDirection, option) => {
+  return getCellChange(revealCells, cells, clues, width, activeCellNumber, activeDirection, option);
+};
+
+
+export const getCheckCells = (cells, clues, width, activeCellNumber, activeDirection, option) => {
+  return getCellChange(checkCells, cells, clues, width, activeCellNumber, activeDirection, option);
+};
+
 
 export const initializePuzzle = (puzzleObject) => {
   const { layout, answers, clues } = puzzleObject.puzzle_data;

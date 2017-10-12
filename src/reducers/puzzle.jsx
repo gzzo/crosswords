@@ -10,6 +10,7 @@ import {
   getOtherDirection,
   getClickClueNumber,
   getCheckCells,
+  getRevealCells,
 } from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
@@ -202,7 +203,7 @@ export function reducer(state = {}, action) {
       const cellToRemove = cells[nextCellNumber];
 
       let newCells = cells;
-      if (!newCells.solved) {
+      if (!cellToRemove.solved) {
         newCells = [
           ...cells.slice(0, nextCellNumber),
           {
@@ -253,6 +254,19 @@ export function reducer(state = {}, action) {
     case CHECK_OPTION: {
       const {cells, clues, activeCellNumber, activeDirection, width} = state[action.puzzleName];
       const newCells = getCheckCells(cells, clues, width, activeCellNumber, activeDirection, action.option);
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          cells: newCells,
+        }
+      }
+    }
+
+    case REVEAL_OPTION: {
+      const {cells, clues, activeCellNumber, activeDirection, width} = state[action.puzzleName];
+      const newCells = getRevealCells(cells, clues, width, activeCellNumber, activeDirection, action.option);
 
       return {
         ...state,
