@@ -6,7 +6,7 @@ import css from './Cell.scss';
 
 export class Cell extends React.Component {
   render() {
-    const {open, active, selected} = this.props;
+    const {open, active, selected, cheated, solved, revealed} = this.props;
     const closed = !open;
 
     const squareClasses = classNames(css.cell, {
@@ -20,13 +20,16 @@ export class Cell extends React.Component {
     }
 
     const cheatClasses = classNames({
+      [css.cheat]: cheated,
+      [css.revealed]: revealed,
     });
 
-    const tatterClasses = classNames(
-      false && css.tatter
-    );
+    const tatterClasses = classNames({
+      [css.tatter]: revealed
+    });
 
     const guessClasses = classNames(css.guess, {
+      [css.solved]: solved,
     });
 
 

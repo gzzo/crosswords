@@ -38,10 +38,10 @@ export class Dropdown extends React.Component {
 
     return (
       <div className={css.dropdownContainer}>
-        <button className={dropdownTitleClasses} onClick={this.toggleOpen} ref={title => this.title = title}>
+        <button className={dropdownTitleClasses} onClick={this.toggleOpen}>
           {this.props.title}
         </button>
-        <ul className={dropdownContentClasses} ref={content => this.content = content}>
+        <ul className={dropdownContentClasses}>
           {this.props.options.map(option => {
             const [optionKey, optionValue] = option;
 

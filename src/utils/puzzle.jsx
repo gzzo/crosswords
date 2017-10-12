@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import { directions, across, down } from 'constants/clue';
 import { CODE_ARROW_RIGHT, CODE_ARROW_LEFT, CODE_ARROW_DOWN, CODE_ARROW_UP } from 'constants/keys';
+import {WORD, PUZZLE, INCOMPLETE, SQUARE, PUZZLE_AND_TIMER} from 'constants/scopes';
 
 
 export const getOtherDirection = direction => {
@@ -61,6 +62,14 @@ export const getGuessCellNumber = (activeCellNumber, activeDirection, cells, clu
   const activeCell = cells[activeCellNumber];
   const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
+  if (activeCellNumber === activeClue.clueEnd) {
+    return activeCellNumber;
+  }
+
+  if (activeCell.solved) {
+    return activeCellNumber + stepSize;
+  }
+
   const nextCellNumber = getNextCellNumber(activeCellNumber + stepSize, activeClue.clueEnd + 1, cells, activeDirection, width);
   if (nextCellNumber !== undefined) {
     return nextCellNumber;
@@ -71,10 +80,6 @@ export const getGuessCellNumber = (activeCellNumber, activeDirection, cells, clu
     return previousCellNumber;
   }
 
-  if (activeCellNumber === activeClue.clueEnd) {
-    return activeCellNumber;
-  }
-
   return activeCellNumber + stepSize;
 };
 
@@ -83,8 +88,7 @@ export const getRemoveGuessCellNumber = (activeCellNumber, activeDirection, cell
   const activeCell = cells[activeCellNumber];
   const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
-
-  if (activeCell.guess && !activeCell.correct) {
+  if (activeCell.guess && !activeCell.solved) {
     return activeCellNumber;
   }
 
@@ -164,6 +168,43 @@ export const getClickClueNumber  = (cells, clues, width, direction, clueNumber) 
   const nextEmptyCellNumber = getNextCellNumber(newClue.clueStart, newClue.clueEnd + 1, cells, direction, width);
 
   return nextEmptyCellNumber || newClue.clueStart;
+};
+
+const changeCells = (cellRange, cells, callback) => {
+  let cellRangeIndex = 0;
+  return cells.map((cell, cellIndex) => {
+    if (cellRangeIndex >= cellRange.length) {
+      return cell;
+    }
+
+    if (cellIndex === cellRangeIndex++) {
+      return {
+        ...cell,
+        ...callback(cell),
+      }
+    }
+
+    return cell;
+  });
+};
+
+const checkCells = (cellRange, cells) => {
+  return changeCells(cellRange, cells, cell => ({
+    cheated: cell.cheated || (cell.guess && cell.guess !== cell.answer),
+    solved: cell.solved || (cell.guess === cell.answer),
+  }));
+};
+
+export const getCheckCells = (cells, clues, width, activeCellNumber, activeDirection, option) => {
+  if (option === SQUARE) {
+    return checkCells([activeCellNumber], cells);
+  } else if (option === WORD) {
+    const activeCell = cells[activeCellNumber];
+    const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+    return checkCells(clueRange(activeClue, activeDirection, width), cells);
+  } else if (option === PUZZLE) {
+    return checkCells(_.range(cells.length), cells);
+  }
 };
 
 export const initializePuzzle = (puzzleObject) => {

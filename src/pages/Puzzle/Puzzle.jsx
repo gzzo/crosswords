@@ -23,6 +23,9 @@ import {
   removeGuess,
   cellClick,
   clueClick,
+  clearOption,
+  checkOption,
+  revealOption,
 } from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
@@ -87,7 +90,11 @@ class Puzzle extends React.Component {
         <div className={css.headerContainer}>
           header
         </div>
-        <Toolbar />
+        <Toolbar
+          clearOption={this.props.clearOption}
+          revealOption={this.props.revealOption}
+          checkOption={this.props.checkOption}
+        />
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
             <ActiveClue clue={activeClue} direction={activeDirection} />
@@ -127,6 +134,9 @@ const mapDispatchToProps = dispatch => ({
   removeGuess: puzzleName => () => dispatch(removeGuess(puzzleName)),
   cellClick: puzzleName => cellNumber => () => dispatch(cellClick(puzzleName, cellNumber)),
   clueClick: puzzleName => (direction, clueNumber) => () => dispatch(clueClick(puzzleName, direction, clueNumber)),
+  clearOption: puzzleName => option => dispatch(clearOption(puzzleName, option)),
+  checkOption: puzzleName => option => dispatch(checkOption(puzzleName, option)),
+  revealOption: puzzleName => option => dispatch(revealOption(puzzleName, option)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -142,6 +152,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     removeGuess: dispatchProps.removeGuess(puzzleName),
     cellClick: dispatchProps.cellClick(puzzleName),
     clueClick: dispatchProps.clueClick(puzzleName),
+    clearOption: dispatchProps.clearOption(puzzleName),
+    checkOption: dispatchProps.checkOption(puzzleName),
+    revealOption: dispatchProps.revealOption(puzzleName),
   }
 };
 

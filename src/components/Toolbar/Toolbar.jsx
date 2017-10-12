@@ -1,14 +1,10 @@
 import React from 'react';
 
 import {Dropdown} from 'components/Dropdown/Dropdown';
+import {WORD, PUZZLE, INCOMPLETE, SQUARE, PUZZLE_AND_TIMER} from 'constants/scopes';
 
 import css from './Toolbar.scss';
 
-const INCOMPLETE = 'Incomplete';
-const SQUARE = 'Square';
-const WORD = 'Word';
-const PUZZLE = 'Puzzle';
-const PUZZLE_AND_TIMER = 'Puzzle & Timer';
 
 
 export class Toolbar extends React.Component {
@@ -31,18 +27,6 @@ export class Toolbar extends React.Component {
     [PUZZLE, PUZZLE],
   ];
 
-  onClearClick = (option) => {
-
-  }
-
-  onRevealClick = (option) => {
-
-  }
-
-  onCheckClick = (option) => {
-
-  }
-
   render() {
     return (
       <div className={css.toolbarContainer}>
@@ -51,17 +35,17 @@ export class Toolbar extends React.Component {
         </div>
         <div className={css.toolbarMenu}>
           <Dropdown
-            onClick={this.onClearClick}
+            onClick={this.props.clearOption}
             options={this.clearOptions}
             title="Clear"
           />
           <Dropdown
-            onClick={this.onRevealClick}
+            onClick={this.props.revealOption}
             options={this.revealOptions}
             title="Reveal"
           />
           <Dropdown
-            onClick={this.onCheckClick}
+            onClick={this.props.checkOption}
             options={this.checkOptions}
             title="Check"
           />

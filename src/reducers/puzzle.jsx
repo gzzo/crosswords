@@ -9,6 +9,7 @@ import {
   getRemoveGuessCellNumber,
   getOtherDirection,
   getClickClueNumber,
+  getCheckCells,
 } from 'utils/puzzle';
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
@@ -20,7 +21,33 @@ const MOVE_ACTIVE_CLUE = 'puzzle/MOVE_ACTIVE_CLUE';
 const REMOVE_GUESS = 'puzzle/REMOVE_GUESS';
 const CELL_CLICK = 'puzzle/CELL_CLICK';
 const CLUE_CLICK = 'puzzle/CLUE_CLICK';
+const REVEAL_OPTION = 'puzzle/REVEAL_OPTION';
+const CHECK_OPTION = 'puzzle/CHECK_OPTION';
+const CLEAR_OPTION = 'puzzle/CLEAR_OPTION';
 
+export function revealOption(puzzleName, option) {
+  return {
+    type: REVEAL_OPTION,
+    puzzleName,
+    option,
+  }
+}
+
+export function checkOption(puzzleName, option) {
+  return {
+    type: CHECK_OPTION,
+    puzzleName,
+    option,
+  }
+}
+
+export function clearOption(puzzleName, option) {
+  return {
+    type: CLEAR_OPTION,
+    puzzleName,
+    option,
+  }
+}
 
 export function clueClick(puzzleName, direction, clueNumber) {
   return {
@@ -117,18 +144,23 @@ export function reducer(state = {}, action) {
       const activeCell = cells[activeCellNumber];
       const nextCellNumber = getGuessCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
 
+      let newCells = cells;
+      if (!activeCell.solved) {
+        newCells = [
+          ...cells.slice(0, activeCellNumber),
+          {
+            ...activeCell,
+            guess: action.guess.toUpperCase(),
+          },
+          ...cells.slice(activeCellNumber + 1)
+        ];
+      }
+
       return {
         ...state,
         [action.puzzleName]: {
           ...state[action.puzzleName],
-          cells: [
-            ...cells.slice(0, activeCellNumber),
-            {
-              ...activeCell,
-              guess: action.guess.toUpperCase(),
-            },
-            ...cells.slice(activeCellNumber + 1)
-          ],
+          cells: newCells,
           activeCellNumber: nextCellNumber,
         }
       }
@@ -169,18 +201,23 @@ export function reducer(state = {}, action) {
       const nextCellNumber = getRemoveGuessCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
       const cellToRemove = cells[nextCellNumber];
 
+      let newCells = cells;
+      if (!newCells.solved) {
+        newCells = [
+          ...cells.slice(0, nextCellNumber),
+          {
+            ...cellToRemove,
+            guess: undefined,
+          },
+          ...cells.slice(nextCellNumber + 1)
+        ];
+      }
+
       return {
         ...state,
         [action.puzzleName]: {
           ...state[action.puzzleName],
-          cells: [
-            ...cells.slice(0, nextCellNumber),
-            {
-              ...cellToRemove,
-              guess: undefined,
-            },
-            ...cells.slice(nextCellNumber + 1)
-          ],
+          cells: newCells,
           activeCellNumber: nextCellNumber,
         }
       }
@@ -200,7 +237,7 @@ export function reducer(state = {}, action) {
     }
 
     case CLUE_CLICK: {
-      const {cells, clues, width, activeCellNumber} = state[action.puzzleName];
+      const {cells, clues, width} = state[action.puzzleName];
       const nextCellNumber = getClickClueNumber(cells, clues, width, action.direction, action.clueNumber);
 
       return {
@@ -209,6 +246,19 @@ export function reducer(state = {}, action) {
           ...state[action.puzzleName],
           activeDirection: action.direction,
           activeCellNumber: nextCellNumber,
+        }
+      }
+    }
+
+    case CHECK_OPTION: {
+      const {cells, clues, activeCellNumber, activeDirection, width} = state[action.puzzleName];
+      const newCells = getCheckCells(cells, clues, width, activeCellNumber, activeDirection, action.option);
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          cells: newCells,
         }
       }
     }
