@@ -4,15 +4,32 @@
   left: 0;
   top: 0;
   width: 100%;
-  position: fixed;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.modal_fixed {
+  position: fixed;
+}
+
+.modal_absolute {
+  position: absolute;
+}
+
 .modal_open {
   visibility: visible;
+}
+
+.overlay_absolute {
+  background-color: #fafafa;
+  opacity: .86;
+  height: 100%;
+  left: 0;
+  top: 0;
+  width: 100%;
+  position: absolute;
 }
 
 .body {
@@ -28,10 +45,22 @@
   pointer-events: visible;
   position: relative;
   z-index: 2;
+  text-align: center;
 }
 
 .button {
-  margin: 2em auto 0;
+  text-decoration: none;
+  margin: 25px auto 0;
+  max-width: 162px;
+  width: 100%;
+  background-color: #fff;
+  border: none;
+  padding: 0;
+  outline: none;
+}
+
+.buttonBody {
+  box-shadow: 0 4px 0 0 #2860d8;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,15 +70,17 @@
   font-weight: 700;
   background-color: #4f85e5;
   border: none;
-  max-width: 162px;
   border-radius: 37px;
-  box-shadow: 0 4px 0 0 #2860d8;
   color: #fff;
   min-width: 120px;
   min-height: 34px;
   padding: 0 1.5em;
-  outline: none;
-  text-decoration: none;
+  margin-bottom: 4px;
   text-transform: uppercase;
-  width: 100%;
+}
+
+.buttonBody:active {
+  margin-top: 4px;
+  margin-bottom: 0;
+  box-shadow: none;
 }

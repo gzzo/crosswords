@@ -10,7 +10,6 @@ export const openModal = (modalName, data) => {
 }
 
 export const closeModal = (modalName) => {
-  console.log('moo')
   return {
     type: CLOSE_MODAL,
     modalName,

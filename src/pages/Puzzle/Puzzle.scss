@@ -12,9 +12,14 @@
 }
 
 .gameContainer {
+  position: relative;
+}
+
+.playArea {
   padding: 10px;
   display: flex;
   justify-content: space-between;
+  position: relative;
 }
 
 .currentClue {

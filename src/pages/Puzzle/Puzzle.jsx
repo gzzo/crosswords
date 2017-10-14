@@ -48,9 +48,7 @@ class Puzzle extends React.Component {
   componentWillMount() {
     this.props.fetchPuzzle();
     document.addEventListener("keydown", this.handleKeyDown);
-    this.setState({
-      interval: setInterval(this.props.updateTimer, 1000),
-    });
+    this.props.openModal('start');
   }
 
   componentWillUnmount() {
@@ -58,13 +56,14 @@ class Puzzle extends React.Component {
   }
 
   pausePuzzle = () => {
-    this.props.openModal('help')();
+    this.props.openModal('pause');
+    clearInterval(this.state.interval);
     this.setState({
       interval: null,
-    }, () => clearInterval(this.state.interval));
+    });
   }
 
-  unpausePuzzle = () => {
+  startPuzzle = () => {
     this.setState({
       interval: setInterval(this.props.updateTimer, 1000),
     }, () => this.props.closeModal());
@@ -118,45 +117,48 @@ class Puzzle extends React.Component {
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
     const puzzleClasses = classNames(css.puzzleContainer, {
-      [css.puzzleContainer_obscured]: this.state.interval === null
+      [css.puzzleContainer_obscured]: this.props.activeModal === 'pause',
     });
 
     return (
       <div className={css.app}>
         <div className={puzzleClasses}>
           <Header {...puzzleMeta} />
-          <Toolbar
-            clearOption={this.props.clearOption}
-            revealOption={this.props.revealOption}
-            checkOption={this.props.checkOption}
-            updateTimer={this.props.updateTimer}
-            timer={timer}
-            pausePuzzle={this.pausePuzzle}
-          />
           <div className={css.gameContainer}>
-            <div className={css.gridContainer}>
-              <ActiveClue clue={activeClue} direction={activeDirection} />
-              <Grid {...puzzle} cellClick={cellClick} />
+            <Toolbar
+              clearOption={this.props.clearOption}
+              revealOption={this.props.revealOption}
+              checkOption={this.props.checkOption}
+              updateTimer={this.props.updateTimer}
+              timer={timer}
+              pausePuzzle={this.pausePuzzle}
+            />
+            <div className={css.playArea}>
+              <div className={css.gridContainer}>
+                <ActiveClue clue={activeClue} direction={activeDirection} />
+                <Grid {...puzzle} cellClick={cellClick} />
+              </div>
+              <div className={css.cluesContainer}>
+                <ClueList
+                  clues={clues}
+                  direction={across}
+                  activeDirection={activeDirection}
+                  activeCell={activeCell}
+                  clueClick={clueClick}
+                />
+                <ClueList
+                  clues={clues}
+                  direction={down}
+                  activeDirection={activeDirection}
+                  activeCell={activeCell}
+                  clueClick={clueClick}
+                />
+              </div>
             </div>
-            <div className={css.cluesContainer}>
-              <ClueList
-                clues={clues}
-                direction={across}
-                activeDirection={activeDirection}
-                activeCell={activeCell}
-                clueClick={clueClick}
-              />
-              <ClueList
-                clues={clues}
-                direction={down}
-                activeDirection={activeDirection}
-                activeCell={activeCell}
-                clueClick={clueClick}
-              />
-            </div>
+            <Modal type="start" activeModal={this.props.activeModal} style="absolute" onClick={this.startPuzzle} />
           </div>
         </div>
-        <Modal type="help" isOpen={this.props.activeModal === "help"} closeModal={this.unpausePuzzle} />
+        <Modal type="pause" activeModal={this.props.activeModal} onOutsideClick={this.startPuzzle} />
       </div>
     );
   }
@@ -179,7 +181,7 @@ const mapDispatchToProps = dispatch => ({
   checkOption: puzzleName => option => dispatch(checkOption(puzzleName, option)),
   revealOption: puzzleName => option => dispatch(revealOption(puzzleName, option)),
   updateTimer: puzzleName => () => dispatch(updateTimer(puzzleName)),
-  openModal: modalName => () => dispatch(openModal(modalName)),
+  openModal: modalName => dispatch(openModal(modalName)),
   closeModal: () => dispatch(closeModal()),
 });
 
