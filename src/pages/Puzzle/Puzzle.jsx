@@ -27,6 +27,7 @@ import {
   clearOption,
   checkOption,
   revealOption,
+  updateTimer,
 } from 'reducers/puzzle';
 import { STATUS_404 } from 'utils/fetcher';
 
@@ -82,7 +83,7 @@ class Puzzle extends React.Component {
       return <div>not found...</div>;
     }
 
-    const { clues, activeDirection, activeCellNumber, cells, puzzleMeta } = puzzle;
+    const { clues, activeDirection, activeCellNumber, cells, puzzleMeta, timer } = puzzle;
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
@@ -93,6 +94,8 @@ class Puzzle extends React.Component {
           clearOption={this.props.clearOption}
           revealOption={this.props.revealOption}
           checkOption={this.props.checkOption}
+          updateTimer={this.props.updateTimer}
+          timer={timer}
         />
         <div className={css.gameContainer}>
           <div className={css.gridContainer}>
@@ -136,6 +139,7 @@ const mapDispatchToProps = dispatch => ({
   clearOption: puzzleName => option => dispatch(clearOption(puzzleName, option)),
   checkOption: puzzleName => option => dispatch(checkOption(puzzleName, option)),
   revealOption: puzzleName => option => dispatch(revealOption(puzzleName, option)),
+  updateTimer: puzzleName => () => dispatch(updateTimer(puzzleName)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -154,6 +158,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     clearOption: dispatchProps.clearOption(puzzleName),
     checkOption: dispatchProps.checkOption(puzzleName),
     revealOption: dispatchProps.revealOption(puzzleName),
+    updateTimer: dispatchProps.updateTimer(puzzleName),
   }
 };
 

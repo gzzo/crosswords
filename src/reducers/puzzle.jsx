@@ -25,6 +25,15 @@ const CLUE_CLICK = 'puzzle/CLUE_CLICK';
 const REVEAL_OPTION = 'puzzle/REVEAL_OPTION';
 const CHECK_OPTION = 'puzzle/CHECK_OPTION';
 const CLEAR_OPTION = 'puzzle/CLEAR_OPTION';
+const UPDATE_TIMER = 'puzzle/UPDATE_TIMER';
+
+
+export function updateTimer(puzzleName) {
+  return {
+    type: UPDATE_TIMER,
+    puzzleName,
+  }
+}
 
 export function revealOption(puzzleName, option) {
   return {
@@ -273,6 +282,18 @@ export function reducer(state = {}, action) {
         [action.puzzleName]: {
           ...state[action.puzzleName],
           cells: newCells,
+        }
+      }
+    }
+
+    case UPDATE_TIMER: {
+      const {timer} = state[action.puzzleName];
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          timer: timer + 1,
         }
       }
     }

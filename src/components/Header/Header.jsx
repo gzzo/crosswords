@@ -9,8 +9,6 @@ export class Header extends React.Component {
     const {printDate, title, author, editor} = this.props;
     const date = moment(printDate);
 
-    console.log(this.props, date);
-
     return (
       <div className={css.headerContainer}>
         <div className={css.title}>

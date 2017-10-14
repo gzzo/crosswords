@@ -282,5 +282,6 @@ export const initializePuzzle = (puzzleObject) => {
     activeCellNumber: 0,
     activeDirection: across,
     puzzleMeta: puzzleObject.puzzle_meta,
+    timer: 0,
   };
 };
