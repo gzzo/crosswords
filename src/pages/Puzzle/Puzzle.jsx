@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 
 import { Grid } from 'components/Grid/Grid';
@@ -6,6 +7,7 @@ import { ClueList } from 'components/ClueList/ClueList';
 import { ActiveClue } from 'components/ActiveClue/ActiveClue';
 import { Toolbar } from 'components/Toolbar/Toolbar';
 import { Header } from 'components/Header/Header';
+import { Modal } from 'components/Modal/Modal';
 
 import { across, down } from 'constants/clue';
 import {
@@ -29,15 +31,43 @@ import {
   revealOption,
   updateTimer,
 } from 'reducers/puzzle';
+import { closeModal, openModal } from 'reducers/modal';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
 
 
 class Puzzle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      interval: null,
+    }
+  }
+
   componentWillMount() {
     this.props.fetchPuzzle();
     document.addEventListener("keydown", this.handleKeyDown);
+    this.setState({
+      interval: setInterval(this.props.updateTimer, 1000),
+    });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.interval);
+  }
+
+  pausePuzzle = () => {
+    this.props.openModal('help')();
+    this.setState({
+      interval: null,
+    }, () => clearInterval(this.state.interval));
+  }
+
+  unpausePuzzle = () => {
+    this.setState({
+      interval: setInterval(this.props.updateTimer, 1000),
+    }, () => this.props.closeModal());
   }
 
   handleKeyDown = (evt) => {
@@ -87,38 +117,46 @@ class Puzzle extends React.Component {
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
+    const puzzleClasses = classNames(css.puzzleContainer, {
+      [css.puzzleContainer_obscured]: this.state.interval === null
+    });
+
     return (
-      <div className={css.puzzleContainer}>
-        <Header {...puzzleMeta} />
-        <Toolbar
-          clearOption={this.props.clearOption}
-          revealOption={this.props.revealOption}
-          checkOption={this.props.checkOption}
-          updateTimer={this.props.updateTimer}
-          timer={timer}
-        />
-        <div className={css.gameContainer}>
-          <div className={css.gridContainer}>
-            <ActiveClue clue={activeClue} direction={activeDirection} />
-            <Grid {...puzzle} cellClick={cellClick} />
-          </div>
-          <div className={css.cluesContainer}>
-            <ClueList
-              clues={clues}
-              direction={across}
-              activeDirection={activeDirection}
-              activeCell={activeCell}
-              clueClick={clueClick}
-            />
-            <ClueList
-              clues={clues}
-              direction={down}
-              activeDirection={activeDirection}
-              activeCell={activeCell}
-              clueClick={clueClick}
-            />
+      <div className={css.app}>
+        <div className={puzzleClasses}>
+          <Header {...puzzleMeta} />
+          <Toolbar
+            clearOption={this.props.clearOption}
+            revealOption={this.props.revealOption}
+            checkOption={this.props.checkOption}
+            updateTimer={this.props.updateTimer}
+            timer={timer}
+            pausePuzzle={this.pausePuzzle}
+          />
+          <div className={css.gameContainer}>
+            <div className={css.gridContainer}>
+              <ActiveClue clue={activeClue} direction={activeDirection} />
+              <Grid {...puzzle} cellClick={cellClick} />
+            </div>
+            <div className={css.cluesContainer}>
+              <ClueList
+                clues={clues}
+                direction={across}
+                activeDirection={activeDirection}
+                activeCell={activeCell}
+                clueClick={clueClick}
+              />
+              <ClueList
+                clues={clues}
+                direction={down}
+                activeDirection={activeDirection}
+                activeCell={activeCell}
+                clueClick={clueClick}
+              />
+            </div>
           </div>
         </div>
+        <Modal type="help" isOpen={this.props.activeModal === "help"} closeModal={this.unpausePuzzle} />
       </div>
     );
   }
@@ -126,6 +164,7 @@ class Puzzle extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   puzzle: state.puzzle[ownProps.match.params.puzzleName],
+  activeModal: state.modal.activeModal,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -140,6 +179,8 @@ const mapDispatchToProps = dispatch => ({
   checkOption: puzzleName => option => dispatch(checkOption(puzzleName, option)),
   revealOption: puzzleName => option => dispatch(revealOption(puzzleName, option)),
   updateTimer: puzzleName => () => dispatch(updateTimer(puzzleName)),
+  openModal: modalName => () => dispatch(openModal(modalName)),
+  closeModal: () => dispatch(closeModal()),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {

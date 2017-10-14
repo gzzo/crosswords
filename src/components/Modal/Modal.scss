@@ -1,0 +1,55 @@
+.modal {
+  visibility: hidden;
+  height: 100%;
+  left: 0;
+  top: 0;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal_open {
+  visibility: visible;
+}
+
+.body {
+  background-color: #fff;
+  border-radius: 13px;
+  box-shadow: 0 3px 12px -1px rgba(0,0,0,.3);
+  box-sizing: border-box;
+  max-height: 95%;
+  max-width: 60%;
+  min-width: 300px;
+  outline: none;
+  padding: 5%;
+  pointer-events: visible;
+  position: relative;
+  z-index: 2;
+}
+
+.button {
+  margin: 2em auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 16.9px;
+  font-weight: 700;
+  background-color: #4f85e5;
+  border: none;
+  max-width: 162px;
+  border-radius: 37px;
+  box-shadow: 0 4px 0 0 #2860d8;
+  color: #fff;
+  min-width: 120px;
+  min-height: 34px;
+  padding: 0 1.5em;
+  outline: none;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 100%;
+}

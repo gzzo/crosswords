@@ -29,9 +29,10 @@ export class Toolbar extends React.Component {
   ];
 
   render() {
+    const {updateTimer, timer, pausePuzzle} = this.props;
     return (
       <div className={css.toolbarContainer}>
-        <Timer updateTimer={this.props.updateTimer} timer={this.props.timer} />
+        <Timer updateTimer={updateTimer} timer={timer} pausePuzzle={pausePuzzle} />
         <div className={css.toolbarMenu}>
           <Dropdown
             onClick={this.props.clearOption}

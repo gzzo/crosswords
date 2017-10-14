@@ -1,7 +1,14 @@
-.puzzleContainer {
+.app {
   font-family: helvetica, arial, sans-serif;
+}
+
+.puzzleContainer {
   height: 100%;
   overflow: hidden;
+}
+
+.puzzleContainer_obscured {
+  filter: blur(33px);
 }
 
 .gameContainer {
