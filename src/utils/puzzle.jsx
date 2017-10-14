@@ -281,5 +281,6 @@ export const initializePuzzle = (puzzleObject) => {
     clues: cluesByNumber,
     activeCellNumber: 0,
     activeDirection: across,
+    puzzleMeta: puzzleObject.puzzle_meta,
   };
 };

@@ -5,6 +5,7 @@ import { Grid } from 'components/Grid/Grid';
 import { ClueList } from 'components/ClueList/ClueList';
 import { ActiveClue } from 'components/ActiveClue/ActiveClue';
 import { Toolbar } from 'components/Toolbar/Toolbar';
+import { Header } from 'components/Header/Header';
 
 import { across, down } from 'constants/clue';
 import {
@@ -81,15 +82,13 @@ class Puzzle extends React.Component {
       return <div>not found...</div>;
     }
 
-    const { clues, activeDirection, activeCellNumber, cells } = puzzle;
+    const { clues, activeDirection, activeCellNumber, cells, puzzleMeta } = puzzle;
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
 
     return (
       <div className={css.puzzleContainer}>
-        <div className={css.headerContainer}>
-          header
-        </div>
+        <Header {...puzzleMeta} />
         <Toolbar
           clearOption={this.props.clearOption}
           revealOption={this.props.revealOption}

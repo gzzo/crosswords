@@ -1,0 +1,27 @@
+.headerContainer {
+  padding: 25px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 200;
+  line-height: 56px;
+}
+
+.dayName {
+  font-weight: 700;
+}
+
+.subtitle {
+  font-weight: 200;
+  font-size: 14px;
+}
+
+.subtitleItem {
+  margin-left: 8px;
+}
+
+.subtitleItem::before {
+  content: "\25AA";
+  margin-right: 8px;
+}
