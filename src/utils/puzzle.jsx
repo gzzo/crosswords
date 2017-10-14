@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { directions, across, down } from 'constants/clue';
 import { CODE_ARROW_RIGHT, CODE_ARROW_LEFT, CODE_ARROW_DOWN, CODE_ARROW_UP } from 'constants/keys';
-import {WORD, PUZZLE, INCOMPLETE, SQUARE, PUZZLE_AND_TIMER} from 'constants/scopes';
+import {WORD, PUZZLE, INCOMPLETE, SQUARE} from 'constants/scopes';
 
 
 export const getOtherDirection = direction => {
@@ -206,14 +206,35 @@ const revealCells = (cell) => {
   };
 };
 
+const clearCells = (cell) => {
+  return {
+    guess: cell.solved ? cell.guess : undefined,
+  };
+};
+
 export const getCellChange = (callback, cells, clues, width, activeCellNumber, activeDirection, option) => {
   if (option === SQUARE) {
     return changeCells([activeCellNumber], cells, callback);
+
   } else if (option === WORD) {
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
     return changeCells(clueRange(activeClue, activeDirection, width), cells, callback);
-  } else if (option === PUZZLE || option === PUZZLE_AND_TIMER) {
+
+  } else if (option === INCOMPLETE) {
+    const activeCell = cells[activeCellNumber];
+    const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+    const cellRange = clueRange(activeClue, activeDirection, width).filter(cellNumber => {
+      const otherDirection = getOtherDirection(activeDirection);
+      const parallelCell = cells[cellNumber];
+      const parallelClue = clues[otherDirection][parallelCell.cellClues[otherDirection]];
+      return !clueRange(parallelClue, otherDirection, width).every(parallelCellNumber => {
+        return cells[parallelCellNumber].guess;
+      })
+    });
+    return changeCells(cellRange, cells, callback);
+
+    } else if (option === PUZZLE) {
     return changeCells(_.range(cells.length), cells, callback);
   }
 };
@@ -227,6 +248,9 @@ export const getCheckCells = (cells, clues, width, activeCellNumber, activeDirec
   return getCellChange(checkCells, cells, clues, width, activeCellNumber, activeDirection, option);
 };
 
+export const getClearCells = (cells, clues, width, activeCellNumber, activeDirection, option) => {
+  return getCellChange(clearCells, cells, clues, width, activeCellNumber, activeDirection, option)
+};
 
 export const initializePuzzle = (puzzleObject) => {
   const { layout, answers, clues } = puzzleObject.puzzle_data;
@@ -283,5 +307,6 @@ export const initializePuzzle = (puzzleObject) => {
     activeDirection: across,
     puzzleMeta: puzzleObject.puzzle_meta,
     timer: 0,
+    raw: puzzleObject,
   };
 };

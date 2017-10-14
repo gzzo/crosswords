@@ -11,7 +11,10 @@ import {
   getClickClueNumber,
   getCheckCells,
   getRevealCells,
+  getClearCells,
 } from 'utils/puzzle';
+import {PUZZLE_AND_TIMER} from 'constants/scopes';
+
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
 const FETCH_PUZZLE_RECEIVE = 'puzzle/FETCH_PUZZLE_RECEIVE';
@@ -276,6 +279,28 @@ export function reducer(state = {}, action) {
     case REVEAL_OPTION: {
       const {cells, clues, activeCellNumber, activeDirection, width} = state[action.puzzleName];
       const newCells = getRevealCells(cells, clues, width, activeCellNumber, activeDirection, action.option);
+
+      return {
+        ...state,
+        [action.puzzleName]: {
+          ...state[action.puzzleName],
+          cells: newCells,
+        }
+      }
+    }
+
+    case CLEAR_OPTION: {
+      if (action.option === PUZZLE_AND_TIMER) {
+        return {
+          ...state,
+          [action.puzzleName]: {
+            ...initializePuzzle(state[action.puzzleName].raw),
+          }
+        }
+      }
+
+      const {cells, clues, activeCellNumber, activeDirection, width} = state[action.puzzleName];
+      const newCells = getClearCells(cells, clues, width, activeCellNumber, activeDirection, action.option);
 
       return {
         ...state,
