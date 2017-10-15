@@ -9,17 +9,21 @@ import css from './Clue.scss';
 
 class Clue extends React.Component {
   render() {
-    const {isActiveClue, isActiveDirection, clue} = this.props;
+    const {isActiveClue, isActiveDirection, clue, obscured} = this.props;
 
     const clueClasses = classNames(css.clue, {
       [css.clue_active]: isActiveClue && isActiveDirection,
       [css.clue_selected]: isActiveClue && !isActiveDirection,
     });
 
+    const clueValueClasses =classNames(css.clueValue, {
+      [css.clueValue_obscured]: obscured,
+    });
+
     return (
       <li className={clueClasses} onClick={this.props.clueClick} ref={this.props.clueRef}>
         <span className={css.clueNumber}>{clue.clueNumber}</span>
-        <span className={css.clueValue}>{clue.value}</span>
+        <span className={clueValueClasses}>{clue.value}</span>
       </li>
     );
   }
@@ -33,7 +37,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     isActiveClue: activeClueNumber === clueNumber,
     isActiveDirection: activeDirection === direction,
-    clue: clues[direction][clueNumber]
+    clue: clues[direction][clueNumber],
+    obscured: state.modal.activeModal === 'start',
   }
 };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 import {abbreviatedDirections} from 'constants/clue';
 
@@ -8,10 +9,18 @@ import css from './ActiveClue.scss';
 
 class ActiveClue extends React.Component {
   render() {
-    const { activeDirection, activeCellNumber, cells, clues } = this.props;
+    const { activeDirection, activeCellNumber, cells, clues, obscured } = this.props;
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
     const abbreviatedDirection = abbreviatedDirections[activeDirection];
+
+    const containerClasses = classNames(css.activeClueContainer, {
+      [css.activeClueContainer_obscured]: obscured
+    });
+
+    if (obscured) {
+      return <div className={containerClasses} />
+    }
 
     return (
       <div className={css.activeClueContainer}>
@@ -29,6 +38,7 @@ class ActiveClue extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   const {activeCellNumber, activeDirection, cells, clues} = state.puzzle[ownProps.puzzleName] || {};
   return {
+    obscured: state.modal.activeModal === 'start',
     activeCellNumber,
     activeDirection,
     cells,
