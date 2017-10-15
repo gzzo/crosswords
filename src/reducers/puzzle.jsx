@@ -14,6 +14,7 @@ import {
   getClearCells,
 } from 'utils/puzzle';
 import {PUZZLE_AND_TIMER} from 'constants/scopes';
+import { STATUS_404 } from 'utils/fetcher';
 
 
 const FETCH_PUZZLE = 'puzzle/FETCH_PUZZLE';
@@ -143,6 +144,13 @@ export function* rootSaga() {
 export function reducer(state = {}, action) {
   switch (action.type) {
     case FETCH_PUZZLE_RECEIVE: {
+      if (action.response === STATUS_404) {
+        return {
+          ...state,
+          [action.puzzleName]: STATUS_404,
+        }
+      }
+
       const puzzleObject = action.response[0];
       return {
         ...state,

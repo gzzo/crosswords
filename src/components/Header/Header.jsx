@@ -1,10 +1,11 @@
 import React from 'react';
 import moment from 'moment';
+import { connect } from 'react-redux';
 
 import css from './Header.scss';
 
 
-export class Header extends React.Component {
+class Header extends React.Component {
   render() {
     const {printDate, title, author, editor} = this.props;
     const date = moment(printDate);
@@ -32,3 +33,16 @@ export class Header extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  const {puzzleMeta} = state.puzzle[ownProps.puzzleName] || {};
+  return {
+    ...puzzleMeta
+  }
+};
+
+const connectedHeader = connect(mapStateToProps)(Header);
+
+export {
+  connectedHeader as Header,
+};

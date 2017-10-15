@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { Grid } from 'components/Grid/Grid';
@@ -7,7 +7,6 @@ import { ClueList } from 'components/ClueList/ClueList';
 import { ActiveClue } from 'components/ActiveClue/ActiveClue';
 import { Toolbar } from 'components/Toolbar/Toolbar';
 import { Header } from 'components/Header/Header';
-import { Modal } from 'components/Modal/Modal';
 
 import { across, down } from 'constants/clue';
 import {
@@ -24,49 +23,16 @@ import {
   moveActiveCell,
   moveActiveClue,
   removeGuess,
-  cellClick,
-  clueClick,
-  clearOption,
-  checkOption,
-  revealOption,
-  updateTimer,
 } from 'reducers/puzzle';
-import { closeModal, openModal } from 'reducers/modal';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
 
 
 class Puzzle extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      interval: null,
-    }
-  }
-
   componentWillMount() {
     this.props.fetchPuzzle();
     document.addEventListener("keydown", this.handleKeyDown);
-    this.props.openModal('start');
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.state.interval);
-  }
-
-  pausePuzzle = () => {
-    this.props.openModal('pause');
-    clearInterval(this.state.interval);
-    this.setState({
-      interval: null,
-    });
-  }
-
-  startPuzzle = () => {
-    this.setState({
-      interval: setInterval(this.props.updateTimer, 1000),
-    }, () => this.props.closeModal());
   }
 
   handleKeyDown = (evt) => {
@@ -80,7 +46,6 @@ class Puzzle extends React.Component {
       evt.preventDefault();
       this.props.moveActiveCell(evt.keyCode);
     }
-
 
     else if (keyCode === CODE_TAB) {
       evt.preventDefault();
@@ -100,74 +65,54 @@ class Puzzle extends React.Component {
       evt.preventDefault();
       this.props.removeGuess();
     }
-  }
+  };
 
   render() {
-    const { puzzle, cellClick, clueClick } = this.props;
-    if (!puzzle) {
+    const { puzzleIs404, puzzleIsLoading } = this.props;
+    if (puzzleIsLoading) {
       return <div>loading...</div>;
     }
 
-    if (puzzle.data === STATUS_404) {
+    if (puzzleIs404) {
       return <div>not found...</div>;
     }
 
-    const { clues, activeDirection, activeCellNumber, cells, puzzleMeta, timer } = puzzle;
-    const activeCell = cells[activeCellNumber];
-    const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+    const { puzzleName } = this.props.match.params;
 
-    const puzzleClasses = classNames(css.puzzleContainer, {
-      [css.puzzleContainer_obscured]: this.props.activeModal === 'pause',
-    });
+    console.log('render puzzle')
 
     return (
       <div className={css.app}>
-        <div className={puzzleClasses}>
-          <Header {...puzzleMeta} />
+        <div className={css.puzzleContainer}>
+          <Header puzzleName={puzzleName} />
           <div className={css.gameContainer}>
-            <Toolbar
-              clearOption={this.props.clearOption}
-              revealOption={this.props.revealOption}
-              checkOption={this.props.checkOption}
-              updateTimer={this.props.updateTimer}
-              timer={timer}
-              pausePuzzle={this.pausePuzzle}
-            />
+            <Toolbar puzzleName={puzzleName} />
             <div className={css.playArea}>
               <div className={css.gridContainer}>
-                <ActiveClue clue={activeClue} direction={activeDirection} />
-                <Grid {...puzzle} cellClick={cellClick} />
+                <ActiveClue puzzleName={puzzleName} />
+                <Grid puzzleName={puzzleName} />
               </div>
               <div className={css.cluesContainer}>
-                <ClueList
-                  clues={clues}
-                  direction={across}
-                  activeDirection={activeDirection}
-                  activeCell={activeCell}
-                  clueClick={clueClick}
-                />
-                <ClueList
-                  clues={clues}
-                  direction={down}
-                  activeDirection={activeDirection}
-                  activeCell={activeCell}
-                  clueClick={clueClick}
-                />
+                <ClueList direction={across} puzzleName={puzzleName} />
+                <ClueList direction={down} puzzleName={puzzleName} />
               </div>
             </div>
-            <Modal type="start" activeModal={this.props.activeModal} style="absolute" onClick={this.startPuzzle} />
           </div>
         </div>
-        <Modal type="pause" activeModal={this.props.activeModal} onOutsideClick={this.startPuzzle} />
       </div>
     );
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  puzzle: state.puzzle[ownProps.match.params.puzzleName],
-  activeModal: state.modal.activeModal,
-});
+const mapStateToProps = (state, ownProps) => {
+  const puzzle =  state.puzzle[ownProps.match.params.puzzleName];
+  const puzzleIsLoading = !puzzle;
+  const puzzleIs404 = puzzle === STATUS_404;
+  return {
+    puzzleIs404,
+    puzzleIsLoading
+  }
+};
 
 const mapDispatchToProps = dispatch => ({
   fetchPuzzle: puzzleName => () => dispatch(fetchPuzzle(puzzleName)),
@@ -175,14 +120,6 @@ const mapDispatchToProps = dispatch => ({
   moveActiveCell: puzzleName => move => dispatch(moveActiveCell(puzzleName, move)),
   moveActiveClue: puzzleName => move => dispatch(moveActiveClue(puzzleName, move)),
   removeGuess: puzzleName => () => dispatch(removeGuess(puzzleName)),
-  cellClick: puzzleName => cellNumber => () => dispatch(cellClick(puzzleName, cellNumber)),
-  clueClick: puzzleName => (direction, clueNumber) => () => dispatch(clueClick(puzzleName, direction, clueNumber)),
-  clearOption: puzzleName => option => dispatch(clearOption(puzzleName, option)),
-  checkOption: puzzleName => option => dispatch(checkOption(puzzleName, option)),
-  revealOption: puzzleName => option => dispatch(revealOption(puzzleName, option)),
-  updateTimer: puzzleName => () => dispatch(updateTimer(puzzleName)),
-  openModal: modalName => dispatch(openModal(modalName)),
-  closeModal: () => dispatch(closeModal()),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -196,12 +133,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     moveActiveCell: dispatchProps.moveActiveCell(puzzleName),
     moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
     removeGuess: dispatchProps.removeGuess(puzzleName),
-    cellClick: dispatchProps.cellClick(puzzleName),
-    clueClick: dispatchProps.clueClick(puzzleName),
-    clearOption: dispatchProps.clearOption(puzzleName),
-    checkOption: dispatchProps.checkOption(puzzleName),
-    revealOption: dispatchProps.revealOption(puzzleName),
-    updateTimer: dispatchProps.updateTimer(puzzleName),
   }
 };
 

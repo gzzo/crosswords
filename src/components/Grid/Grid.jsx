@@ -1,17 +1,22 @@
 import React from 'react';
 import _ from 'lodash';
+import { connect } from 'react-redux';
 
 import {Cell} from 'components/Cell/Cell';
 import {cellNumberInClue} from 'utils/puzzle';
 
+import { cellClick } from 'reducers/puzzle';
+
 import css from './Grid.scss';
 
 
-export class Grid extends React.Component {
+class Grid extends React.Component {
   render() {
     const {width, cells, clues, activeCellNumber, activeDirection, cellClick} = this.props;
     const activeCell = cells[activeCellNumber];
     const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+
+    console.log('render grid')
 
     return (
       <div className={css.gridContainer}>
@@ -38,4 +43,36 @@ export class Grid extends React.Component {
       </div>
     );
   }
+}
+
+const mapStateToProps = (state, ownProps) => {
+  const {width, cells, clues, activeCellNumber, activeDirection} = state.puzzle[ownProps.puzzleName] || {};
+  return {
+    width,
+    cells,
+    clues,
+    activeCellNumber,
+    activeDirection
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    cellClick: puzzleName => cellNumber => () => dispatch(cellClick(puzzleName, cellNumber)),
+  }
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
+    cellClick: dispatchProps.cellClick(ownProps.puzzleName),
+  }
+}
+
+const connectedGrid = connect(mapStateToProps, mapDispatchToProps, mergeProps)(Grid);
+
+export {
+  connectedGrid as Grid,
 }

@@ -10,6 +10,17 @@
   justify-content: center;
 }
 
+.overlay_fixed {
+  backdrop-filter: blur(20px);
+  position: fixed;
+}
+
+.overlay_absolute {
+  background-color: #fafafa;
+  opacity: .86;
+  position: absolute;
+}
+
 .modal_fixed {
   position: fixed;
 }
@@ -22,14 +33,11 @@
   visibility: visible;
 }
 
-.overlay_absolute {
-  background-color: #fafafa;
-  opacity: .86;
+.overlay {
   height: 100%;
   left: 0;
   top: 0;
   width: 100%;
-  position: absolute;
 }
 
 .body {
