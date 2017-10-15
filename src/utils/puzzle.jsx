@@ -277,17 +277,18 @@ export const initializePuzzle = (puzzleObject) => {
 
     _.each(clueList, clue => {
       const cell = cells[clue.clueStart];
-      cell.clueStart = clue.clueNum;
+      clue.clueNumber = clue.clueNum;
+      cell.clueStart = clue.clueNumber;
 
       if (previousClue) {
-        previousClue.nextClueNumber = clue.clueNum;
-        clue.previousClueNumber = previousClue.clueNum;
+        previousClue.nextClueNumber = clue.clueNumber;
+        clue.previousClueNumber = previousClue.clueNumber;
       }
 
-      cluesByNumber[direction][clue.clueNum] = clue;
+      cluesByNumber[direction][clue.clueNumber] = clue;
 
-      clueRange(clue, direction, width).forEach(clueNum => {
-        cells[clueNum].cellClues[direction] = clue.clueNum;
+      clueRange(clue, direction, width).forEach(clueNumber => {
+        cells[clueNumber].cellClues[direction] = clue.clueNumber;
       });
 
       previousClue = clue;

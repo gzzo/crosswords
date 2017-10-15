@@ -25,33 +25,3 @@
   box-sizing: border-box;
   margin: 0;
 }
-
-.clue {
-  display: flex;
-  padding: 5px 1px;
-  cursor: pointer;
-  border-left: 10px solid transparent;
-}
-
-.clue_active {
-  background-color: #A7D8FF;
-}
-
-.clue_selected {
-  border-left-color: #A7D8FF;
-}
-
-.clueNumber {
-  line-height: 1.4;
-  margin-right: 5px;
-  font-weight: 700;
-  text-align: right;
-  min-width: 24px;
-  width: 24px;
-}
-
-.clueValue {
-  line-height: 1.4;
-  margin-right: 5px;
-  margin-left: 5px;
-}
