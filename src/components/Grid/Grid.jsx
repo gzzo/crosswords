@@ -3,20 +3,14 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import {Cell} from 'components/Cell/Cell';
-import {cellNumberInClue} from 'utils/puzzle';
 
-import { cellClick } from 'reducers/puzzle';
 
 import css from './Grid.scss';
 
 
 class Grid extends React.Component {
   render() {
-    const {width, cells, clues, activeCellNumber, activeDirection, cellClick} = this.props;
-    const activeCell = cells[activeCellNumber];
-    const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
-
-    console.log('render grid')
+    const {width, puzzleName} = this.props;
 
     return (
       <div className={css.gridContainer}>
@@ -29,10 +23,8 @@ class Grid extends React.Component {
                     return (
                       <Cell
                         key={cellNumber}
-                        active={activeCellNumber === cellNumber}
-                        selected={cellNumberInClue(cellNumber, activeClue, activeDirection, width)}
-                        onClick={cellClick(cellNumber)}
-                        {...cells[cellNumber]}
+                        cellNumber={cellNumber}
+                        puzzleName={puzzleName}
                       />
                     );
                   })}
@@ -46,32 +38,13 @@ class Grid extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {width, cells, clues, activeCellNumber, activeDirection} = state.puzzle[ownProps.puzzleName] || {};
+  const {width} = state.puzzle[ownProps.puzzleName] || {};
   return {
     width,
-    cells,
-    clues,
-    activeCellNumber,
-    activeDirection
   }
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    cellClick: puzzleName => cellNumber => () => dispatch(cellClick(puzzleName, cellNumber)),
-  }
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    ...dispatchProps,
-    ...ownProps,
-    cellClick: dispatchProps.cellClick(ownProps.puzzleName),
-  }
-}
-
-const connectedGrid = connect(mapStateToProps, mapDispatchToProps, mergeProps)(Grid);
+const connectedGrid = connect(mapStateToProps)(Grid);
 
 export {
   connectedGrid as Grid,

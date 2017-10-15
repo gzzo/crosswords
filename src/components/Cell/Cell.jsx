@@ -1,12 +1,16 @@
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+
+import {cellNumberInClue} from 'utils/puzzle';
+import { cellClick } from 'reducers/puzzle';
 
 import css from './Cell.scss';
 
 
-export class Cell extends React.Component {
+class Cell extends React.Component {
   render() {
-    const {open, active, selected, cheated, solved, revealed} = this.props;
+    const {open, cheated, solved, revealed, active, selected} = this.props;
     const closed = !open;
 
     const squareClasses = classNames(css.cell, {
@@ -34,7 +38,7 @@ export class Cell extends React.Component {
 
 
     return (
-      <div className={squareClasses} onClick={this.props.onClick}>
+      <div className={squareClasses} onClick={this.props.cellClick}>
         <div className={cheatClasses}>
           <div className={tatterClasses} />
         </div>
@@ -47,4 +51,36 @@ export class Cell extends React.Component {
       </div>
     );
   }
+}
+
+const mapStateToProps = (state, ownProps) => {
+  const {cells, activeDirection, clues, activeCellNumber, width} = state.puzzle[ownProps.puzzleName] || {};
+  const activeCell = cells[activeCellNumber];
+  const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+  return {
+    active: activeCellNumber === ownProps.cellNumber,
+    selected: cellNumberInClue(ownProps.cellNumber, activeClue, activeDirection, width),
+    ...cells[ownProps.cellNumber],
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    cellClick: (puzzleName, cellNumber) => () => dispatch(cellClick(puzzleName, cellNumber)),
+  }
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
+    cellClick: dispatchProps.cellClick(ownProps.puzzleName, ownProps.cellNumber),
+  }
+}
+
+const connectedCell = connect(mapStateToProps, mapDispatchToProps, mergeProps)(Cell);
+
+export {
+  connectedCell as Cell,
 }
