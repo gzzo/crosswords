@@ -9,6 +9,17 @@ import css from './ClueList.scss';
 
 
 class ClueList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.clues = {};
+  }
+
+  componentDidUpdate() {
+    if (this.list) {
+      this.list.scrollTop = this.clues[this.props.activeClueNumber].offsetTop - this.list.offsetTop;
+    }
+  }
+
   render() {
     const {direction, clues, puzzleName} = this.props;
 
@@ -17,7 +28,7 @@ class ClueList extends React.Component {
         <div className={css.directionName}>
           {direction}
         </div>
-        <ol className={css.clueList}>
+        <ol className={css.clueList} ref={list => { this.list = list}}>
           {_.map(clues, (clue, clueNumberString) => {
             const clueNumber = Number(clueNumberString);
             return (
@@ -26,6 +37,7 @@ class ClueList extends React.Component {
                 puzzleName={puzzleName}
                 clueNumber={clueNumber}
                 direction={direction}
+                clueRef={clue => {this.clues[clueNumber] = clue}}
               />
             )
           })}
@@ -36,9 +48,11 @@ class ClueList extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {clues} = state.puzzle[ownProps.puzzleName] || {};
+  const {clues, activeCellNumber, cells} = state.puzzle[ownProps.puzzleName] || {};
   const {direction} = ownProps;
+  const activeCell = cells[activeCellNumber];
   return {
+    activeClueNumber: clues[direction][activeCell.cellClues[direction]].clueNumber,
     clues: clues[direction],
   }
 };

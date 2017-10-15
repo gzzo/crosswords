@@ -17,7 +17,7 @@ class Clue extends React.Component {
     });
 
     return (
-      <li className={clueClasses} onClick={this.props.clueClick}>
+      <li className={clueClasses} onClick={this.props.clueClick} ref={this.props.clueRef}>
         <span className={css.clueNumber}>{clue.clueNumber}</span>
         <span className={css.clueValue}>{clue.value}</span>
       </li>
@@ -29,7 +29,7 @@ const mapStateToProps = (state, ownProps) => {
   const {activeCellNumber, activeDirection, cells, clues} = state.puzzle[ownProps.puzzleName] || {};
   const {clueNumber, direction} = ownProps;
   const activeCell = cells[activeCellNumber];
-  const activeClueNumber = activeCell.cellClues[activeDirection];
+  const activeClueNumber = activeCell.cellClues[direction];
   return {
     isActiveClue: activeClueNumber === clueNumber,
     isActiveDirection: activeDirection === direction,
