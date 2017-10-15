@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
+import { clueRange } from 'utils/puzzle';
 import { clueClick } from 'reducers/puzzle';
 
 import css from './Clue.scss';
@@ -9,11 +10,12 @@ import css from './Clue.scss';
 
 class Clue extends React.Component {
   render() {
-    const {isActiveClue, isActiveDirection, clue, obscured} = this.props;
+    const {isActiveClue, isActiveDirection, isFilled, clue, obscured} = this.props;
 
     const clueClasses = classNames(css.clue, {
       [css.clue_active]: isActiveClue && isActiveDirection,
       [css.clue_selected]: isActiveClue && !isActiveDirection,
+      [css.clue_filled]: isFilled,
     });
 
     const clueValueClasses =classNames(css.clueValue, {
@@ -30,13 +32,15 @@ class Clue extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {activeCellNumber, activeDirection, cells, clues} = state.puzzle[ownProps.puzzleName] || {};
+  const {activeCellNumber, activeDirection, cells, clues, width} = state.puzzle[ownProps.puzzleName] || {};
   const {clueNumber, direction} = ownProps;
   const activeCell = cells[activeCellNumber];
   const activeClueNumber = activeCell.cellClues[direction];
+  const clue = clues[direction][clueNumber];
   return {
     isActiveClue: activeClueNumber === clueNumber,
     isActiveDirection: activeDirection === direction,
+    isFilled: clueRange(clue, direction, width).every(cellNumber => cells[cellNumber].guess),
     clue: clues[direction][clueNumber],
     obscured: state.modal.activeModal === 'start',
   }

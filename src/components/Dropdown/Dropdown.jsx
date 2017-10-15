@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import { MenuButton } from 'components/Buttons/MenuButton';
+
 import css from './Dropdown.scss';
 
 
@@ -13,7 +15,7 @@ export class Dropdown extends React.Component {
     }
   }
 
-  toggleOpen = (evt) => {
+  toggleOpen = () => {
     document.removeEventListener('click', this.toggleOpen);
 
     this.setState(prevState => ({
@@ -28,8 +30,8 @@ export class Dropdown extends React.Component {
   }
 
   render() {
-    const dropdownTitleClasses = classNames(css.dropdownTitle, this.props.className, {
-      [css.dropdownTitle_open]: this.state.open
+    const buttonClasses = classNames({
+      [css.button_open]: this.state.open
     });
 
     const dropdownContentClasses = classNames(css.dropdownContent, {
@@ -38,9 +40,9 @@ export class Dropdown extends React.Component {
 
     return (
       <div className={css.dropdownContainer}>
-        <button className={dropdownTitleClasses} onClick={this.toggleOpen}>
+        <MenuButton className={buttonClasses} onClick={this.toggleOpen}>
           {this.props.title}
-        </button>
+        </MenuButton>
         <ul className={dropdownContentClasses}>
           {this.props.options.map(option => {
             const [optionKey, optionValue] = option;

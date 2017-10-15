@@ -11,6 +11,10 @@
   display: flex;
 }
 
+.timerContent_paused {
+  cursor: default;
+}
+
 .pauseIcon {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMyIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDEzIDE1Ij48cGF0aCBkPSJNNSAxMmMwIDEuNjUtMS4xMjUgMy0yLjUgM1MwIDEzLjY1IDAgMTJWM2MwLTEuNjUgMS4xMjUtMyAyLjUtM1M1IDEuMzUgNSAzdjl6bTggMGMwIDEuNjUtMS4xMjUgMy0yLjUgM1M4IDEzLjY1IDggMTJWM2MwLTEuNjUgMS4xMjUtMyAyLjUtM1MxMyAxLjM1IDEzIDN2OXoiIGZpbGw9IiM0MDgzRkIiLz48L3N2Zz4K);
   height: 15px;

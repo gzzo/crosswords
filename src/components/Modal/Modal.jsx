@@ -1,7 +1,18 @@
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 import css from './Modal.scss';
+
+class CloseX extends React.Component {
+  render() {
+    return (
+      <div className={css.closeX}>
+        ×
+      </div>
+    )
+  }
+}
 
 
 class HelpContent extends React.Component {
@@ -42,9 +53,35 @@ class StartContent extends React.Component {
   }
 }
 
+class DoneContent extends React.Component {
+  render() {
+    return (
+      <div>
+        <CloseX />
+        <div className={css.puzzleIcon} />
+        <h2 className={css.congratulations}>Congratulations!</h2>
+        <div>
+          You solved a <strong>Sunday</strong> puzzle in <strong>{this.props.timer} seconds.</strong>
+        </div>
+      </div>
+    )
+  }
+}
+
+const mapStateToProps = (state, ownProps) => {
+  const puzzle =  state.puzzle[ownProps.puzzleName];
+
+  return {
+    timer: puzzle.timer,
+  }
+}
+
+const connectedDoneContent = connect(mapStateToProps)(DoneContent);
+
 const CONTENT = {
   pause: HelpContent,
   start: StartContent,
+  done: connectedDoneContent,
 };
 
 

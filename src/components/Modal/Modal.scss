@@ -92,3 +92,35 @@
   margin-bottom: 0;
   box-shadow: none;
 }
+
+.congratulations {
+  margin-bottom: 15px;
+  font-size: 34px;
+}
+
+.puzzleIcon {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NyIgaGVpZ2h0PSI5NyIgdmlld0JveD0iMCAwIDk3IDk3Ij48cGF0aCBkPSJNMi41IDIuNWg5MnY5MmgtOTJ6TTkyIDV2ODdINVY1aDg3bTUtNUgwdjk3aDk3VjB6IiBmaWxsPSIjRkZGIi8+PHBhdGggZmlsbD0iIzQwODNGQiIgZD0iTTUgNWgyMXYyMUg1em0yMiAwaDIxdjIxSDI3em0yMiAwaDIxdjIxSDQ5em0yMiAwaDIxdjIxSDcxek01IDI3aDIxdjIxSDV6Ii8+PHBhdGggZmlsbD0iIzE4MzE2NyIgZD0iTTI3IDI3aDQzdjQzSDI3eiIvPjxwYXRoIGZpbGw9IiM0MDgzRkIiIGQ9Ik03MSAyN2gyMXYyMUg3MXpNNSA0OWgyMXYyMUg1em02NiAwaDIxdjIxSDcxek01IDcxaDIxdjIxSDV6bTIyIDBoMjF2MjFIMjd6bTIyIDBoMjF2MjFINDl6bTIyIDBoMjF2MjFINzF6Ii8+PHBhdGggZmlsbD0iI0ZGRiIgZD0iTTYzLjI5IDQ0LjY4Yy0uMDU3LS4xODItLjIxNS0uMzE1LS40MDQtLjM0MmwtOS42MzMtMS4zNzMtNC4zMDYtOC41NjJjLS4xNy0uMzM4LS43MjQtLjMzOC0uODk0IDBsLTQuMzA2IDguNTYyLTkuNjMzIDEuMzczYy0uMTkuMDI3LS4zNDcuMTYtLjQwNS4zNDJzLS4wMS4zODIuMTMuNTE0bDYuOTYgNi42NjQtMS42NSA5LjQwNWMtLjA0LjE4Ny4wNC4zNzYuMTkuNDkuMDguMDYyLjE5LjA5Ni4yOS4wOTYuMDggMCAuMTUtLjAyLjIzLS4wNmw4LjYyLTQuNDUgOC42MSA0LjQ0Yy4wNy4wMy4xNS4wNS4yMy4wNWguMDJjLjI3IDAgLjUtLjIzLjUtLjUgMC0uMDgtLjAyLS4xNi0uMDYtLjIybC0xLjYyLTkuMjcgNi45Ny02LjY3Yy4xNC0uMTMuMTktLjMzLjEzLS41MXoiLz48L3N2Zz4=);
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0 auto 24px;
+  height: 65px;
+  width: 65px;
+}
+
+.closeX {
+  color: #ccc;
+  cursor: pointer;
+  font-weight: 200;
+  font-size: 40px;
+  line-height: 56px;
+  height: 44px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 44px;
+  text-align: left;
+}
+
+.closeX:hover {
+  color: #959595;
+}

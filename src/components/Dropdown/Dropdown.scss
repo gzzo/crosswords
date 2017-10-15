@@ -2,20 +2,7 @@
   cursor: pointer;
 }
 
-.dropdownTitle {
-  cursor: pointer;
-  padding: 2px 6px 3px;
-  height: 45px;
-  border: none;
-  background-color: transparent;
-  outline: none;
-  font-size: 14px;
-  width: 70px;
-  color: #959595;
-  text-align: center;
-}
-
-.dropdownTitle_open {
+.button_open {
   background-color: #fafafa;
 }
 
@@ -52,8 +39,6 @@
   border-top: 0;
 }
 
-.dropdownTitle:hover,
 .dropdownItem:hover {
-  background-color: #f4f4f4;
   color: #000;
 }

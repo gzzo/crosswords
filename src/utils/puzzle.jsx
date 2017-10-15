@@ -14,7 +14,7 @@ const getStepSize = (direction, width, positive = true) => {
   return multiplier * (direction === across ? 1 : width);
 };
 
-const clueRange = (clue, direction, width) => {
+export const clueRange = (clue, direction, width) => {
   const stepSize = getStepSize(direction, width);
   return _.range(clue.clueStart, clue.clueEnd + stepSize, stepSize);
 };
@@ -212,6 +212,10 @@ const clearCells = (cell) => {
   };
 };
 
+export const isPuzzleSolved = (cells) => {
+  return cells.every(cell => !cell.open || cell.guess === cell.answer);
+}
+
 export const getCellChange = (callback, cells, clues, width, activeCellNumber, activeDirection, option) => {
   if (option === SQUARE) {
     return changeCells([activeCellNumber], cells, callback);
@@ -255,11 +259,18 @@ export const getClearCells = (cells, clues, width, activeCellNumber, activeDirec
 export const initializePuzzle = (puzzleObject) => {
   const { layout, answers, clues } = puzzleObject.puzzle_data;
   const { width } = puzzleObject.puzzle_meta;
-  const cells = layout.map((cell, index) => ({
-    open: !!cell,
-    answer: answers[index],
-    cellClues: {},
-  }));
+  let availableCells = 0;
+  const cells = layout.map((cell, index) => {
+    if (cell) {
+      availableCells += 1;
+    }
+
+    return {
+      open: !!cell,
+      answer: answers[index],
+      cellClues: {},
+    }
+  });
 
   const cluesByNumber = {
     [across]: {},
@@ -300,6 +311,7 @@ export const initializePuzzle = (puzzleObject) => {
   });
 
   return {
+    availableCells,
     cells,
     width,
     defaultClues,
@@ -309,5 +321,6 @@ export const initializePuzzle = (puzzleObject) => {
     puzzleMeta: puzzleObject.puzzle_meta,
     timer: 0,
     raw: puzzleObject,
+    filledCells: 0,
   };
 };

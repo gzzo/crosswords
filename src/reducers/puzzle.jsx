@@ -12,6 +12,7 @@ import {
   getCheckCells,
   getRevealCells,
   getClearCells,
+  isPuzzleSolved
 } from 'utils/puzzle';
 import {PUZZLE_AND_TIMER} from 'constants/scopes';
 import { STATUS_404 } from 'utils/fetcher';
@@ -161,11 +162,12 @@ export function reducer(state = {}, action) {
     }
 
     case GUESS_CELL: {
-      const {cells, activeCellNumber, activeDirection, clues, width} = state[action.puzzleName];
+      const {cells, activeCellNumber, activeDirection, clues, width, filledCells, availableCells} = state[action.puzzleName];
       const activeCell = cells[activeCellNumber];
       const nextCellNumber = getGuessCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
 
       let newCells = cells;
+      let newFilledCells = filledCells;
       if (!activeCell.solved) {
         newCells = [
           ...cells.slice(0, activeCellNumber),
@@ -177,12 +179,18 @@ export function reducer(state = {}, action) {
         ];
       }
 
+      if (!activeCell.guess) {
+        newFilledCells = filledCells + 1;
+      }
+
       return {
         ...state,
         [action.puzzleName]: {
           ...state[action.puzzleName],
           cells: newCells,
           activeCellNumber: nextCellNumber,
+          filledCells: newFilledCells,
+          solved: newFilledCells === availableCells && isPuzzleSolved(cells),
         }
       }
     }
@@ -218,7 +226,7 @@ export function reducer(state = {}, action) {
     }
 
     case REMOVE_GUESS: {
-      const {cells, activeCellNumber, activeDirection, clues, width} = state[action.puzzleName];
+      const {cells, activeCellNumber, activeDirection, clues, width, filledCells} = state[action.puzzleName];
       const nextCellNumber = getRemoveGuessCellNumber(activeCellNumber, activeDirection,  cells, clues, width);
       const cellToRemove = cells[nextCellNumber];
 
@@ -240,6 +248,7 @@ export function reducer(state = {}, action) {
           ...state[action.puzzleName],
           cells: newCells,
           activeCellNumber: nextCellNumber,
+          filledCells: cellToRemove.solved ? filledCells : filledCells - 1,
         }
       }
     }
@@ -285,14 +294,17 @@ export function reducer(state = {}, action) {
     }
 
     case REVEAL_OPTION: {
-      const {cells, clues, activeCellNumber, activeDirection, width} = state[action.puzzleName];
+      const {cells, clues, activeCellNumber, activeDirection, width, availableCells} = state[action.puzzleName];
       const newCells = getRevealCells(cells, clues, width, activeCellNumber, activeDirection, action.option);
+      const newFilledCells = newCells.filter(cell => cell.guess).length;
 
       return {
         ...state,
         [action.puzzleName]: {
           ...state[action.puzzleName],
           cells: newCells,
+          filledCells: newFilledCells,
+          solved: newFilledCells === availableCells && isPuzzleSolved(cells),
         }
       }
     }
@@ -315,6 +327,7 @@ export function reducer(state = {}, action) {
         [action.puzzleName]: {
           ...state[action.puzzleName],
           cells: newCells,
+          filledCells: newCells.filter(cell => cell.guess).length,
         }
       }
     }

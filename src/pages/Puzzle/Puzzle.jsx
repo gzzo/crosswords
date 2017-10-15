@@ -7,6 +7,7 @@ import { ClueList } from 'components/ClueList/ClueList';
 import { ActiveClue } from 'components/ActiveClue/ActiveClue';
 import { Toolbar } from 'components/Toolbar/Toolbar';
 import { Header } from 'components/Header/Header';
+import { Modal } from 'components/Modal/Modal';
 
 import { across, down } from 'constants/clue';
 import {
@@ -15,7 +16,8 @@ import {
   CODE_BACKSPACE,
   CODE_LETTER_A,
   CODE_LETTER_Z,
-  CODE_TAB
+  CODE_TAB,
+  CODE_ENTER,
 } from 'constants/keys';
 import {
   fetchPuzzle,
@@ -24,15 +26,65 @@ import {
   moveActiveClue,
   removeGuess,
 } from 'reducers/puzzle';
+import { updateTimer } from 'reducers/puzzle';
+import { openModal, closeModal } from 'reducers/modal';
 import { STATUS_404 } from 'utils/fetcher';
 
 import css from './Puzzle.scss';
 
 
 class Puzzle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      interval: null,
+    }
+  }
+
   componentWillMount() {
     this.props.fetchPuzzle();
+    this.props.openModal('start');
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.interval);
+  }
+
+  componentWillUpdate(nextProps) {
+    if (nextProps.solved && !this.props.solved) {
+      this.props.openModal('done');
+      clearInterval(this.state.interval);
+      this.setState({
+        interval: null,
+      });
+    }
+  }
+
+  pausePuzzle = () => {
+    document.removeEventListener("keydown", this.handleKeyDown);
+    this.props.openModal('pause');
+    clearInterval(this.state.interval);
+    this.setState({
+      interval: null,
+    });
+  }
+
+  startPuzzle = () => {
     document.addEventListener("keydown", this.handleKeyDown);
+    this.setState({
+      interval: setInterval(this.props.updateTimer, 1000),
+    }, () => this.props.closeModal());
+  }
+
+  finishPuzzle = () => {
+    document.addEventListener("keydown", this.handleKeyDown);
+    this.props.closeModal();
+  }
+
+  resetPuzzle = () => {
+    this.setState({
+      interval: setInterval(this.props.updateTimer, 1000),
+    });
   }
 
   handleKeyDown = (evt) => {
@@ -47,7 +99,7 @@ class Puzzle extends React.Component {
       this.props.moveActiveCell(evt.keyCode);
     }
 
-    else if (keyCode === CODE_TAB) {
+    else if (keyCode === CODE_TAB || keyCode === CODE_ENTER) {
       evt.preventDefault();
 
       if (evt.shiftKey) {
@@ -79,14 +131,12 @@ class Puzzle extends React.Component {
 
     const { puzzleName } = this.props.match.params;
 
-    console.log('render puzzle')
-
     return (
       <div className={css.app}>
         <div className={css.puzzleContainer}>
           <Header puzzleName={puzzleName} />
           <div className={css.gameContainer}>
-            <Toolbar puzzleName={puzzleName} />
+            <Toolbar puzzleName={puzzleName} pausePuzzle={this.pausePuzzle} resetPuzzle={this.resetPuzzle} />
             <div className={css.playArea}>
               <div className={css.gridContainer}>
                 <ActiveClue puzzleName={puzzleName} />
@@ -99,6 +149,9 @@ class Puzzle extends React.Component {
             </div>
           </div>
         </div>
+        <Modal type="start" activeModal={this.props.activeModal} style="absolute" onClick={this.startPuzzle} />
+        <Modal type="pause" activeModal={this.props.activeModal} onOutsideClick={this.startPuzzle} />
+        <Modal type="done" activeModal={this.props.activeModal} onOutsideClick={this.finishPuzzle} puzzleName={puzzleName} />
       </div>
     );
   }
@@ -110,7 +163,9 @@ const mapStateToProps = (state, ownProps) => {
   const puzzleIs404 = puzzle === STATUS_404;
   return {
     puzzleIs404,
-    puzzleIsLoading
+    puzzleIsLoading,
+    solved: puzzle && puzzle.solved,
+    activeModal: state.modal.activeModal,
   }
 };
 
@@ -120,6 +175,9 @@ const mapDispatchToProps = dispatch => ({
   moveActiveCell: puzzleName => move => dispatch(moveActiveCell(puzzleName, move)),
   moveActiveClue: puzzleName => move => dispatch(moveActiveClue(puzzleName, move)),
   removeGuess: puzzleName => () => dispatch(removeGuess(puzzleName)),
+  updateTimer: puzzleName => () => dispatch(updateTimer(puzzleName)),
+  openModal: modalName => dispatch(openModal(modalName)),
+  closeModal: () => dispatch(closeModal()),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -133,6 +191,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     moveActiveCell: dispatchProps.moveActiveCell(puzzleName),
     moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
     removeGuess: dispatchProps.removeGuess(puzzleName),
+    updateTimer: dispatchProps.updateTimer(puzzleName),
   }
 };
 
