@@ -50,6 +50,12 @@ class ClueList extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   const {clues, activeCellNumber, cells} = state.puzzle[ownProps.puzzleName] || {};
   const {direction} = ownProps;
+  if (state.modal.activeModal === 'start') {
+    return {
+      clues: clues[direction]
+    };
+  }
+
   const activeCell = cells[activeCellNumber];
   return {
     activeClueNumber: clues[direction][activeCell.cellClues[direction]].clueNumber,

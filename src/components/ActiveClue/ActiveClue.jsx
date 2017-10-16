@@ -9,10 +9,7 @@ import css from './ActiveClue.scss';
 
 class ActiveClue extends React.Component {
   render() {
-    const { activeDirection, activeCellNumber, cells, clues, obscured } = this.props;
-    const activeCell = cells[activeCellNumber];
-    const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
-    const abbreviatedDirection = abbreviatedDirections[activeDirection];
+    const { activeClue, abbreviatedDirection, obscured } = this.props;
 
     const containerClasses = classNames(css.activeClueContainer, {
       [css.activeClueContainer_obscured]: obscured
@@ -37,12 +34,20 @@ class ActiveClue extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const {activeCellNumber, activeDirection, cells, clues} = state.puzzle[ownProps.puzzleName] || {};
+  if (state.modal.activeModal === 'start') {
+    return {
+      obscured: true,
+      activeClue: {},
+    }
+  }
+
+  const activeCell = cells[activeCellNumber];
+  const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+  const abbreviatedDirection = abbreviatedDirections[activeDirection];
   return {
     obscured: state.modal.activeModal === 'start',
-    activeCellNumber,
-    activeDirection,
-    cells,
-    clues,
+    abbreviatedDirection,
+    activeClue,
   }
 };
 

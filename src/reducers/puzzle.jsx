@@ -1,4 +1,5 @@
-import { call, put, takeLatest, all } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import { call, put, takeLatest, all, take, race } from 'redux-saga/effects';
 
 import { puzzleFetcher } from 'utils/fetcher';
 import {
@@ -31,7 +32,23 @@ const REVEAL_OPTION = 'puzzle/REVEAL_OPTION';
 const CHECK_OPTION = 'puzzle/CHECK_OPTION';
 const CLEAR_OPTION = 'puzzle/CLEAR_OPTION';
 const UPDATE_TIMER = 'puzzle/UPDATE_TIMER';
+const START_TIMER = 'puzzle/START_TIMER';
+const STOP_TIMER = 'puzzle/STOP_TIMER';
 
+
+export function startTimer(puzzleName) {
+  return {
+    type: START_TIMER,
+    puzzleName
+  }
+}
+
+export function stopTimer(puzzleName) {
+  return {
+    type: STOP_TIMER,
+    puzzleName,
+  }
+}
 
 export function updateTimer(puzzleName) {
   return {
@@ -136,9 +153,29 @@ function* watchPuzzle() {
   yield takeLatest(FETCH_PUZZLE, fetchPuzzleRequest);
 }
 
+function* runInterval() {
+  let startTimer = yield take(START_TIMER);
+  while (startTimer) {
+    while (true) {
+      const {stopTimer} = yield race({
+        stopTimer: take(STOP_TIMER),
+        tickTimer: call(delay, 1000),
+      });
+
+      if (stopTimer) {
+        break;
+      }
+
+      yield put(updateTimer(startTimer.puzzleName));
+    }
+    startTimer = yield take(START_TIMER);
+  }
+}
+
 export function* rootSaga() {
   yield all([
     watchPuzzle(),
+    runInterval(),
   ]);
 }
 

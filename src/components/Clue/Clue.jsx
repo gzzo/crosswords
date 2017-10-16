@@ -34,6 +34,12 @@ class Clue extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   const {activeCellNumber, activeDirection, cells, clues, width} = state.puzzle[ownProps.puzzleName] || {};
   const {clueNumber, direction} = ownProps;
+  if (state.modal.activeModal === 'start') {
+    return {
+      clue: clues[direction][clueNumber],
+      obscured: true,
+    }
+  }
   const activeCell = cells[activeCellNumber];
   const activeClueNumber = activeCell.cellClues[direction];
   const clue = clues[direction][clueNumber];

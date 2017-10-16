@@ -55,6 +55,12 @@ class Cell extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const {cells, activeDirection, clues, activeCellNumber, width} = state.puzzle[ownProps.puzzleName] || {};
+  if (state.modal.activeModal === 'start') {
+    return {
+      ...cells[ownProps.cellNumber],
+    };
+  }
+
   const activeCell = cells[activeCellNumber];
   const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
   return {

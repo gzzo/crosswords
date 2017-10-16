@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { Grid } from 'components/Grid/Grid';
@@ -25,8 +24,9 @@ import {
   moveActiveCell,
   moveActiveClue,
   removeGuess,
+  startTimer,
+  stopTimer,
 } from 'reducers/puzzle';
-import { updateTimer } from 'reducers/puzzle';
 import { openModal, closeModal } from 'reducers/modal';
 import { STATUS_404 } from 'utils/fetcher';
 
@@ -68,18 +68,12 @@ class Puzzle extends React.Component {
   }
 
   pausePuzzle = () => {
-    clearInterval(this.state.interval);
-    this.setState({
-      interval: null,
-    });
+    this.props.stopTimer();
   }
 
   startPuzzle = () => {
-    this.setState({
-      interval: setInterval(this.props.updateTimer, 1000),
-    }, () => {
-      this.props.closeModal();
-    });
+    this.props.startTimer();
+    this.props.closeModal();
   }
 
   finishPuzzle = () => {
@@ -87,9 +81,7 @@ class Puzzle extends React.Component {
   }
 
   resetPuzzle = () => {
-    this.setState({
-      interval: setInterval(this.props.updateTimer, 1000),
-    });
+    this.props.startTimer();
   }
 
   handleKeyDown = (evt) => {
@@ -186,9 +178,10 @@ const mapDispatchToProps = dispatch => ({
   moveActiveCell: puzzleName => move => dispatch(moveActiveCell(puzzleName, move)),
   moveActiveClue: puzzleName => move => dispatch(moveActiveClue(puzzleName, move)),
   removeGuess: puzzleName => () => dispatch(removeGuess(puzzleName)),
-  updateTimer: puzzleName => () => dispatch(updateTimer(puzzleName)),
   openModal: modalName => dispatch(openModal(modalName)),
   closeModal: () => dispatch(closeModal()),
+  startTimer: puzzleName => () => dispatch(startTimer(puzzleName)),
+  stopTimer: puzzleName => () => dispatch(stopTimer(puzzleName)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -202,7 +195,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     moveActiveCell: dispatchProps.moveActiveCell(puzzleName),
     moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
     removeGuess: dispatchProps.removeGuess(puzzleName),
-    updateTimer: dispatchProps.updateTimer(puzzleName),
+    startTimer: dispatchProps.startTimer(puzzleName),
+    stopTimer: dispatchProps.stopTimer(puzzleName),
   }
 };
 
