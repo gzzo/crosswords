@@ -44,25 +44,30 @@ class Puzzle extends React.Component {
   componentWillMount() {
     this.props.fetchPuzzle();
     this.props.openModal('start');
+    document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUnmount() {
     clearInterval(this.state.interval);
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUpdate(nextProps) {
     if (nextProps.solved && !this.props.solved) {
+      this.pausePuzzle();
       this.props.openModal('done');
-      clearInterval(this.state.interval);
-      this.setState({
-        interval: null,
-      });
+    } else if (nextProps.filled && !this.props.filled) {
+      this.pausePuzzle();
+      this.props.openModal('incorrect');
     }
   }
 
-  pausePuzzle = () => {
-    document.removeEventListener("keydown", this.handleKeyDown);
+  openPauseModal = () => {
+    this.pausePuzzle();
     this.props.openModal('pause');
+  }
+
+  pausePuzzle = () => {
     clearInterval(this.state.interval);
     this.setState({
       interval: null,
@@ -70,14 +75,14 @@ class Puzzle extends React.Component {
   }
 
   startPuzzle = () => {
-    document.addEventListener("keydown", this.handleKeyDown);
     this.setState({
       interval: setInterval(this.props.updateTimer, 1000),
-    }, () => this.props.closeModal());
+    }, () => {
+      this.props.closeModal();
+    });
   }
 
   finishPuzzle = () => {
-    document.addEventListener("keydown", this.handleKeyDown);
     this.props.closeModal();
   }
 
@@ -93,6 +98,10 @@ class Puzzle extends React.Component {
     }
 
     const {keyCode} = evt;
+
+    if (this.props.activeModal) {
+      return;
+    }
 
     if (keyCode >= CODE_ARROW_LEFT && keyCode <= CODE_ARROW_DOWN) {
       evt.preventDefault();
@@ -136,7 +145,7 @@ class Puzzle extends React.Component {
         <div className={css.puzzleContainer}>
           <Header puzzleName={puzzleName} />
           <div className={css.gameContainer}>
-            <Toolbar puzzleName={puzzleName} pausePuzzle={this.pausePuzzle} resetPuzzle={this.resetPuzzle} />
+            <Toolbar puzzleName={puzzleName} openPauseModal={this.openPauseModal} resetPuzzle={this.resetPuzzle} />
             <div className={css.playArea}>
               <div className={css.gridContainer}>
                 <ActiveClue puzzleName={puzzleName} />
@@ -149,9 +158,10 @@ class Puzzle extends React.Component {
             </div>
           </div>
         </div>
-        <Modal type="start" activeModal={this.props.activeModal} style="absolute" onClick={this.startPuzzle} />
-        <Modal type="pause" activeModal={this.props.activeModal} onOutsideClick={this.startPuzzle} />
-        <Modal type="done" activeModal={this.props.activeModal} onOutsideClick={this.finishPuzzle} puzzleName={puzzleName} />
+        <Modal type="start" activeModal={this.props.activeModal} style="absolute" closeModal={this.startPuzzle} />
+        <Modal type="pause" activeModal={this.props.activeModal} closeModal={this.startPuzzle} overlayClick />
+        <Modal type="done" activeModal={this.props.activeModal} closeModal={this.finishPuzzle} puzzleName={puzzleName} overlayClick />
+        <Modal type="incorrect" activeModal={this.props.activeModal} closeModal={this.startPuzzle} overlayClick />
       </div>
     );
   }
@@ -165,6 +175,7 @@ const mapStateToProps = (state, ownProps) => {
     puzzleIs404,
     puzzleIsLoading,
     solved: puzzle && puzzle.solved,
+    filled: puzzle && puzzle.availableCells === puzzle.filledCells,
     activeModal: state.modal.activeModal,
   }
 };

@@ -42,10 +42,10 @@ class Toolbar extends React.Component {
   }
 
   render() {
-    const { puzzleName, solved, pausePuzzle } = this.props;
+    const { puzzleName, solved, openPauseModal } = this.props;
     return (
       <div className={css.toolbarContainer}>
-        <Timer puzzleName={puzzleName} pausePuzzle={pausePuzzle} />
+        <Timer puzzleName={puzzleName} openPauseModal={openPauseModal} />
         {solved ? (
           <div className={css.toolbarMenu}>
             <MenuButton onClick={this.resetPuzzle}>

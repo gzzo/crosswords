@@ -28,7 +28,7 @@ class Timer extends React.Component {
             {display}
           </div>
         ) : (
-          <div className={css.timerContent} onClick={this.props.pausePuzzle}>
+          <div className={css.timerContent} onClick={this.props.openPauseModal}>
             <div>
               {display}
             </div>
