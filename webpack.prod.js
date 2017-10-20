@@ -5,7 +5,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = merge(common, {
   entry: [
-    './src/index.jsx',
+    './index.jsx',
   ],
 
   plugins: [
