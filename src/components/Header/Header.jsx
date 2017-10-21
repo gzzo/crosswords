@@ -2,6 +2,8 @@ import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
+import {GithubIcon} from 'components/Icons/GithubIcon';
+
 import css from './Header.scss';
 
 
@@ -12,23 +14,28 @@ class Header extends React.Component {
 
     return (
       <div className={css.headerContainer}>
-        <div className={css.title}>
-          <span className={css.dayName}>
-            {date.format('dddd')}{' '}
-          </span>
-          {date.format('LL')}
+        <div>
+          <div className={css.title}>
+            <span className={css.dayName}>
+              {date.format('dddd')}{' '}
+            </span>
+            {date.format('LL')}
+          </div>
+          <div className={css.subtitle}>
+            <span>
+              "{title}"
+            </span>
+            <span className={css.subtitleItem}>
+              By {author}
+            </span>
+            <span className={css.subtitleItem}>
+              Edited by {editor}
+            </span>
+          </div>
         </div>
-        <div className={css.subtitle}>
-          <span>
-            "{title}"
-          </span>
-          <span className={css.subtitleItem}>
-            By {author}
-          </span>
-          <span className={css.subtitleItem}>
-            Edited by {editor}
-          </span>
-        </div>
+        <a href="https://github.com/gzzo/crosswords" target="_blank">
+          <GithubIcon />
+        </a>
       </div>
     );
   }
