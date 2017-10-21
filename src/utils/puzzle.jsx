@@ -49,6 +49,28 @@ const getNextClue = (cellNumber, direction, cells, clues, width, defaultClues, f
   };
 };
 
+export const getAnyRelated = (cellNumber, activeClue, clues, width) => {
+  if (!activeClue.related) {
+    return false;
+  }
+
+  for (let direction in activeClue.related) {
+    if (!activeClue.related.hasOwnProperty(direction)) {
+      continue;
+    }
+
+    const relatedClueNumbers = activeClue.related[direction];
+    for (let i = 0; i < relatedClueNumbers.length; i++) {
+      const relatedClueNumber = relatedClueNumbers[i];
+      if (cellNumberInClue(cellNumber, clues[direction][relatedClueNumber], direction, width)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 export const cellNumberInClue = (cellNumber, clue, direction, width) => {
   const inRange = cellNumber <= clue.clueEnd && cellNumber >= clue.clueStart;
   if (direction === across) {

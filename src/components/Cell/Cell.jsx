@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
-import {cellNumberInClue} from 'utils/puzzle';
+import {cellNumberInClue, getAnyRelated} from 'utils/puzzle';
 import { cellClick } from 'reducers/puzzle';
 
 import css from './Cell.scss';
@@ -10,13 +10,14 @@ import css from './Cell.scss';
 
 class Cell extends React.Component {
   render() {
-    const {open, cheated, solved, revealed, active, selected} = this.props;
+    const {open, cheated, solved, revealed, active, selected, related} = this.props;
     const closed = !open;
 
     const squareClasses = classNames(css.cell, {
       [css.cell_selected]: selected,
       [css.cell_active]: active,
       [css.cell_closed]: closed,
+      [css.cell_related]: related,
     });
 
     if (closed) {
@@ -63,9 +64,11 @@ const mapStateToProps = (state, ownProps) => {
 
   const activeCell = cells[activeCellNumber];
   const activeClue = clues[activeDirection][activeCell.cellClues[activeDirection]];
+
   return {
     active: activeCellNumber === ownProps.cellNumber,
     selected: cellNumberInClue(ownProps.cellNumber, activeClue, activeDirection, width),
+    related: getAnyRelated(ownProps.cellNumber, activeClue, clues, width),
     ...cells[ownProps.cellNumber],
   }
 };
