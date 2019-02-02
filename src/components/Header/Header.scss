@@ -18,12 +18,3 @@
   font-weight: 200;
   font-size: 14px;
 }
-
-.subtitleItem {
-  margin-left: 8px;
-}
-
-.subtitleItem::before {
-  content: "\25AA";
-  margin-right: 8px;
-}

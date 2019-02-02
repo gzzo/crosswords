@@ -282,9 +282,13 @@ export const initializePuzzle = (puzzleObject) => {
   const { layout, answers, clues } = puzzleObject.puzzle_data;
   const { width } = puzzleObject.puzzle_meta;
   let availableCells = 0;
+  let activeCellNumber = null;
   const cells = layout.map((cell, index) => {
     if (cell) {
       availableCells += 1;
+      if (activeCellNumber === null) {
+        activeCellNumber = index
+      }
     }
 
     return {
@@ -338,7 +342,7 @@ export const initializePuzzle = (puzzleObject) => {
     width,
     defaultClues,
     clues: cluesByNumber,
-    activeCellNumber: 0,
+    activeCellNumber: activeCellNumber,
     activeDirection: across,
     puzzleMeta: puzzleObject.puzzle_meta,
     timer: 0,

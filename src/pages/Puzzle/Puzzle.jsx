@@ -36,27 +36,24 @@ import css from './Puzzle.scss';
 class Puzzle extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      interval: null,
-    }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchPuzzle();
     this.props.openModal('start');
     document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.interval);
+    this.pausePuzzle()
     document.removeEventListener("keydown", this.handleKeyDown);
   }
 
-  componentWillUpdate(nextProps) {
-    if (nextProps.solved && !this.props.solved) {
+  componentDidUpdate(prevProps) {
+    if (this.props.solved && !prevProps.solved) {
       this.pausePuzzle();
       this.props.openModal('done');
-    } else if (nextProps.filled && !this.props.filled) {
+    } else if (this.props.filled && !prevProps.filled) {
       this.pausePuzzle();
       this.props.openModal('incorrect');
     }
@@ -121,19 +118,17 @@ class Puzzle extends React.Component {
   };
 
   render() {
-    const { puzzleIs404, puzzleIsLoading } = this.props;
+    const { puzzleIs404, puzzleIsLoading, puzzleName } = this.props;
     if (puzzleIsLoading) {
-      return <div>loading...</div>;
+      return null;
     }
 
     if (puzzleIs404) {
       return <div>not found...</div>;
     }
 
-    const { puzzleName } = this.props.match.params;
-
     return (
-      <div className={css.app}>
+      <div>
         <div className={css.puzzleContainer}>
           <Header puzzleName={puzzleName} />
           <div className={css.gameContainer}>
@@ -159,15 +154,22 @@ class Puzzle extends React.Component {
   }
 }
 
+const getFullPuzzleName = (category, name) => {
+  return `${category}/${name}`
+}
+
 const mapStateToProps = (state, ownProps) => {
-  const puzzle =  state.puzzle[ownProps.match.params.puzzleName];
+  const { puzzleCategory, puzzleName } = ownProps.match.params;
+  const fullPuzzleName = getFullPuzzleName(puzzleCategory, puzzleName)
+  const puzzle =  state.puzzle[fullPuzzleName];
   const puzzleIsLoading = !puzzle;
   const puzzleIs404 = puzzle === STATUS_404;
   return {
     puzzleIs404,
     puzzleIsLoading,
+    puzzleName: fullPuzzleName,
     solved: puzzle && puzzle.solved,
-    filled: puzzle && puzzle.availableCells === puzzle.filledCells,
+    filled: puzzle && (puzzle.availableCells === puzzle.filledCells),
     activeModal: state.modal.activeModal,
   }
 };
@@ -185,18 +187,19 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { puzzleName } = ownProps.match.params;
+  const { puzzleCategory, puzzleName } = ownProps.match.params;
+  const fullPuzzleName = getFullPuzzleName(puzzleCategory, puzzleName)
   return {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    guessCell: dispatchProps.guessCell(puzzleName),
-    fetchPuzzle: dispatchProps.fetchPuzzle(puzzleName),
-    moveActiveCell: dispatchProps.moveActiveCell(puzzleName),
-    moveActiveClue: dispatchProps.moveActiveClue(puzzleName),
-    removeGuess: dispatchProps.removeGuess(puzzleName),
-    startTimer: dispatchProps.startTimer(puzzleName),
-    stopTimer: dispatchProps.stopTimer(puzzleName),
+    guessCell: dispatchProps.guessCell(fullPuzzleName),
+    fetchPuzzle: dispatchProps.fetchPuzzle(fullPuzzleName),
+    moveActiveCell: dispatchProps.moveActiveCell(fullPuzzleName),
+    moveActiveClue: dispatchProps.moveActiveClue(fullPuzzleName),
+    removeGuess: dispatchProps.removeGuess(fullPuzzleName),
+    startTimer: dispatchProps.startTimer(fullPuzzleName),
+    stopTimer: dispatchProps.stopTimer(fullPuzzleName),
   }
 };
 

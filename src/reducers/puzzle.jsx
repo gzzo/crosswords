@@ -182,6 +182,10 @@ export function* rootSaga() {
 export function reducer(state = {}, action) {
   switch (action.type) {
     case FETCH_PUZZLE_RECEIVE: {
+      if (state[action.puzzleName]) {
+        return state
+      }
+
       if (action.response === STATUS_404) {
         return {
           ...state,
@@ -227,7 +231,7 @@ export function reducer(state = {}, action) {
           cells: newCells,
           activeCellNumber: nextCellNumber,
           filledCells: newFilledCells,
-          solved: newFilledCells === availableCells && isPuzzleSolved(cells),
+          solved: (newFilledCells === availableCells) && isPuzzleSolved(newCells),
         }
       }
     }
@@ -341,7 +345,7 @@ export function reducer(state = {}, action) {
           ...state[action.puzzleName],
           cells: newCells,
           filledCells: newFilledCells,
-          solved: newFilledCells === availableCells && isPuzzleSolved(cells),
+          solved: newFilledCells === availableCells && isPuzzleSolved(newCells),
         }
       }
     }

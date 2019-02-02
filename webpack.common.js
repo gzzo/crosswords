@@ -23,7 +23,7 @@ module.exports = {
         },
       },
       {
-        test: /\.s?css$/,
+        test: /\.scss$/,
         use: [
           'style-loader',
           {
@@ -38,11 +38,28 @@ module.exports = {
         ],
       },
       {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false,
+              localIdentName: '[path][name]__[local]--[hash:base64:5]'
+            }
+          },
+        ],
+      },
+      {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
           'file-loader',
         ],
       },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
+      }
     ],
   },
 

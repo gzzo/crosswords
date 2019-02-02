@@ -1,16 +1,16 @@
-import React from 'react';
-import moment from 'moment';
-import { connect } from 'react-redux';
+import React from 'react'
+import moment from 'moment'
+import {connect} from 'react-redux'
 
-import {GithubIcon} from 'components/Icons/GithubIcon';
+import {GithubIcon} from 'components/Icons/GithubIcon'
 
-import css from './Header.scss';
+import css from './Header.scss'
 
 
 class Header extends React.Component {
   render() {
-    const {printDate, title, author, editor} = this.props;
-    const date = moment(printDate);
+    const {printDate, title, author, editor} = this.props
+    const date = moment(printDate)
 
     return (
       <div className={css.headerContainer}>
@@ -22,34 +22,38 @@ class Header extends React.Component {
             {date.format('LL')}
           </div>
           <div className={css.subtitle}>
-            <span>
-              "{title}"
-            </span>
-            <span className={css.subtitleItem}>
+            {title && (
+              <span className={css.titleItem}>
+                "{title}" ▪
+              </span>
+            )}
+            <span className={css.titleItem}>
               By {author}
             </span>
-            <span className={css.subtitleItem}>
-              Edited by {editor}
-            </span>
+            {editor && (
+              <span>
+                {' ▪ '}Edited by {editor}
+              </span>
+            )}
           </div>
         </div>
         <a href="https://github.com/gzzo/crosswords" target="_blank">
-          <GithubIcon />
+          <GithubIcon/>
         </a>
       </div>
-    );
+    )
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {puzzleMeta} = state.puzzle[ownProps.puzzleName] || {};
+  const {puzzleMeta} = state.puzzle[ownProps.puzzleName] || {}
   return {
     ...puzzleMeta
   }
-};
+}
 
-const connectedHeader = connect(mapStateToProps)(Header);
+const connectedHeader = connect(mapStateToProps)(Header)
 
 export {
   connectedHeader as Header,
-};
+}
