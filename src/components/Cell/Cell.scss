@@ -4,6 +4,8 @@
   background-color: white;
   position: relative;
   box-sizing: border-box;
+  user-select: none;
+  overflow: hidden;
 }
 
 .cell_closed {
@@ -54,12 +56,15 @@
 }
 
 .cheat {
-  border-color: transparent;
-  border-style: solid none none solid;
-  right: 0;
-  border-top-color: black;
-  border-width: .6vw;
   position: absolute;
+  top: 0;
+  left: 50%;
+  content: ' ';
+  width: 2px;
+  height: 100%;
+  background-color: red;
+  transform: rotate(-45deg) scale(1.5);
+  z-index: 100;
 }
 
 .revealed {

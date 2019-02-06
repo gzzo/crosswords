@@ -278,6 +278,7 @@ export function reducer(state = {}, action) {
           {
             ...cellToRemove,
             guess: undefined,
+            cheated: false,
           },
           ...cells.slice(nextCellNumber + 1)
         ];

@@ -21,7 +21,6 @@ class ClueList extends React.Component {
   }
 
   render() {
-    console.log(this.props)
     const {direction, clues, puzzleName} = this.props;
 
     return (

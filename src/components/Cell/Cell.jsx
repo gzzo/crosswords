@@ -26,7 +26,6 @@ class Cell extends React.Component {
   }
 
   updateCellFonts = () => {
-    console.log('update cell fonts')
     const cellGuess = this.cellGuess
     const cellNumber = this.cellNumber
     const cellContainer = this.cellContainer
@@ -41,7 +40,7 @@ class Cell extends React.Component {
     cellGuess.style.fontSize = `${guessWidth}px`
     cellGuess.style.lineHeight = `${guessWidth}px`
 
-    const numberWidth = cellWidth * .2
+    const numberWidth = cellWidth * .3
     cellNumber.style.fontSize = `${numberWidth}px`
     cellNumber.style.lineHeight = `${numberWidth}px`
   }
