@@ -4,7 +4,6 @@
 
 .puzzleContainer {
   height: 100%;
-  overflow: hidden;
 }
 
 .gameContainer {
@@ -21,6 +20,11 @@
 .currentClue {
   padding-bottom: 10px;
 
+}
+
+.gridContainer {
+  position: sticky;
+  top: 56;
 }
 
 .gridContainer,
